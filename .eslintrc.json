@@ -1,0 +1,73 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:storybook/recommended",
+    "plugin:tailwindcss/recommended",
+    "plugin:typescript-sort-keys/recommended",
+    "next",
+    "prettier"
+  ],
+  "plugins": ["no-relative-import-paths", "sort-destructure-keys", "sort-keys-fix", "tailwindcss", "typescript-sort-keys"],
+  "rules": {
+    "arrow-body-style": ["error", "as-needed"],
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc"
+        },
+        "groups": [],
+        "newlines-between": "never"
+      }
+    ],
+    "newline-after-var": "error",
+    "no-console": [
+      "error",
+      {
+        "allow": ["error"]
+      }
+    ],
+    "no-else-return": [
+      "error",
+      {
+        "allowElseIf": false
+      }
+    ],
+    "no-relative-import-paths/no-relative-import-paths": [
+      "error",
+      {
+        "prefix": "@pairing"
+      }
+    ],
+    "no-shadow": "error",
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "block"
+      },
+      {
+        "blankLine": "always",
+        "prev": "block",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "block-like"
+      },
+      {
+        "blankLine": "always",
+        "prev": "block-like",
+        "next": "*"
+      }
+    ],
+    "require-await": "error",
+    "sort-destructure-keys/sort-destructure-keys": "error",
+    "sort-keys": "error",
+    "sort-keys-fix/sort-keys-fix": "error",
+    "tailwindcss/classnames-order": "error"
+  }
+}
