@@ -12,6 +12,11 @@ module.exports = {
     formats: ['image/webp'],
     remotePatterns: [
       {
+        hostname: 'image.tmdb.org',
+        port: '',
+        protocol: 'https',
+      },
+      {
         hostname: 'via.placeholder.com',
         port: '',
         protocol: 'https',

@@ -26,6 +26,7 @@
     "sharp": "0.33.3",
     "superjson": "2.2.1",
     "tailwindcss": "3.4.3",
+    "tmdb-ts": "^1.8.0",
     "turbo": "1.13.2",
     "typescript": "5.4.4",
     "zod": "3.22.4"
@@ -55,7 +56,7 @@
     "fetch-mock": "9.11.0",
     "null-loader": "4.0.1",
     "prettier": "3.2.5",
-    "prisma-query-log": "3.2.0",
+    "prisma-query-log": "^3.2.0",
     "storybook": "8.0.6",
     "ts-node": "10.9.2",
     "tsconfig-paths": "4.2.0"
@@ -63,7 +64,7 @@
   "name": "eigakan",
   "prisma": {
     "schema": "db/schema.prisma",
-    "seed": "ts-node  db/seed.ts"
+    "seed": "ts-node db/seed.ts"
   },
   "private": true,
   "scripts": {
@@ -71,7 +72,8 @@
     "check:eslint": "eslint .",
     "check:prettier": "prettier --check .",
     "check:tsc": "tsc --noEmit",
-    "dev": "ts-node index.ts",
+    "dev": "next dev",
+    "dev:gdcs": "ts-node crons/gdcs.ts",
     "fix:eslint": "eslint --fix .",
     "fix:prettier": "prettier --write .",
     "fix:prisma": "prisma format",

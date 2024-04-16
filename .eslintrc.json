@@ -37,7 +37,7 @@
     "no-relative-import-paths/no-relative-import-paths": [
       "error",
       {
-        "prefix": "@pairing"
+        "prefix": "@eigakan"
       }
     ],
     "no-shadow": "error",

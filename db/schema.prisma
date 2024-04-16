@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Area {
+  id      Int      @id @default(autoincrement())
+  cinemas Cinema[]
+  label   String   @unique
+  slug    String   @unique
+}
+
+model Cinema {
+  id        Int        @id @default(autoincrement())
+  area      Area       @relation(fields: [areaId], references: [id])
+  areaId    Int
+  label     String     @unique
+  showtimes Showtime[]
+  slug      String     @unique
+}
+
+model Feature {
+  id        Int        @id @default(autoincrement())
+  label     String     @unique
+  showtimes Showtime[]
+  slug      String     @unique
+}
+
+model Movie {
+  id        Int        @id @default(autoincrement())
+  poster    String     @unique
+  showtimes Showtime[]
+  title     String     @unique
+}
+
+model Showtime {
+  id       Int       @id @default(autoincrement())
+  cinema   Cinema    @relation(fields: [cinemaId], references: [id])
+  cinemaId Int
+  end      DateTime
+  features Feature[]
+  movie    Movie     @relation(fields: [movieId], references: [id])
+  movieId  Int
+  start    DateTime
+
+  @@unique(fields: [cinemaId, movieId, start])
+}
