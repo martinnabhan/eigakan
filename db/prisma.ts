@@ -138,7 +138,7 @@ M2bdYd5L+ow+bdbGtsVKOuN+R9Dm17YpswF+vyQ=
 
 declare global {
   // eslint-disable-next-line no-var, vars-on-top
-  var prisma: PrismaClient;
+  var prisma: PrismaClient | undefined;
 }
 
 if (!global.prisma) {
@@ -152,14 +152,12 @@ if (!global.prisma) {
   });
 
   if (process.env.NODE_ENV === 'development') {
-    if (process.env.NODE_ENV === 'development') {
-      global.prisma.$on(
-        // @ts-expect-error なぜか型のエラーが出ます。
-        'query',
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        require('prisma-query-log').createPrismaQueryEventHandler({ colorParameter: '\u001b[32m', colorQuery: '\u001b[36m' }),
-      );
-    }
+    global.prisma.$on(
+      // @ts-expect-error なぜか型のエラーが出ます。
+      'query',
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      require('prisma-query-log').createPrismaQueryEventHandler({ colorParameter: '\u001b[32m', colorQuery: '\u001b[36m' }),
+    );
   }
 }
 

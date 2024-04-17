@@ -1,11 +1,9 @@
-import Link from 'next/link';
-
 const Footer = () => (
-  <footer className="bg-purple-700 text-white">
-    <div className="container text-center">
-      <Link className="block py-2 text-lg" href="/">
-        映画館
-      </Link>
+  <footer className="bg-red-600">
+    <div className="container mx-auto">
+      <div className=" border-t border-red-200 py-8  text-xs text-red-200">
+        <p>&copy; {new Date().getFullYear()} 映画館ドットコム</p>
+      </div>
     </div>
   </footer>
 );

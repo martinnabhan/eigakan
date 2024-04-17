@@ -6,6 +6,7 @@ module.exports = {
     ignoreDuringBuilds: true,
   },
   experimental: {
+    scrollRestoration: true,
     swcPlugins: [['next-superjson-plugin', {}]],
   },
   images: {
