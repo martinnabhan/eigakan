@@ -71,19 +71,16 @@ const parseMovie = async (movieElement: Element, day: Date) => {
   let movieId = movie?.id;
 
   if (!movieId) {
-    try {
     ({ id: movieId } = await prisma.movie.create({
       data: {
         poster: results[0].poster_path,
         title: results[0].title,
       },
     }));
-    } catch {
-      console.error(title);
-    }
   }
 
   if (!movieId) {
+    console.error(`TMDBで映画が見つかりませんでした：${title}`);
     return;
   }
 
