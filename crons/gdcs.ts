@@ -71,12 +71,16 @@ const parseMovie = async (movieElement: Element, day: Date) => {
   let movieId = movie?.id;
 
   if (!movieId) {
-    ({ id: movieId } = await prisma.movie.create({
-      data: {
-        poster: results[0].poster_path,
-        title: results[0].title,
-      },
-    }));
+    try {
+      ({ id: movieId } = await prisma.movie.create({
+        data: {
+          poster: results[0].poster_path,
+          title: results[0].title,
+        },
+      }));
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   if (!movieId) {

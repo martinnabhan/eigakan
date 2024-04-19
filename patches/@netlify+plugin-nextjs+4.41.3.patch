@@ -1,0 +1,95 @@
+diff --git a/node_modules/@netlify/plugin-nextjs/lib/helpers/functions.js b/node_modules/@netlify/plugin-nextjs/lib/helpers/functions.js
+index 32cfdd0..23a0a5d 100644
+--- a/node_modules/@netlify/plugin-nextjs/lib/helpers/functions.js
++++ b/node_modules/@netlify/plugin-nextjs/lib/helpers/functions.js
+@@ -91,7 +91,8 @@ const generateFunctions = async ({ INTERNAL_FUNCTIONS_SRC, PUBLISH_DIR, PACKAGE_
+         }
+     };
+     await writeHandler(constants_1.HANDLER_FUNCTION_NAME, constants_1.HANDLER_FUNCTION_TITLE, false);
+-    await writeHandler(constants_1.ODB_FUNCTION_NAME, constants_1.ODB_FUNCTION_TITLE, true);
++    // ODB関数はISRに使われていますが、ISRを使わないので無駄な関数を作成しないように修正しています。
++    // await writeHandler(constants_1.ODB_FUNCTION_NAME, constants_1.ODB_FUNCTION_TITLE, true);
+ };
+ exports.generateFunctions = generateFunctions;
+ /**
+@@ -101,7 +102,8 @@ exports.generateFunctions = generateFunctions;
+ const generatePagesResolver = async ({ INTERNAL_FUNCTIONS_SRC, PUBLISH_DIR, PACKAGE_PATH = '', FUNCTIONS_SRC = (0, pathe_1.join)(PACKAGE_PATH, constants_1.DEFAULT_FUNCTIONS_SRC), }) => {
+     const functionsPath = INTERNAL_FUNCTIONS_SRC || FUNCTIONS_SRC;
+     const jsSource = await (0, getPageResolver_1.getResolverForPages)(PUBLISH_DIR, PACKAGE_PATH);
+-    await (0, fs_extra_1.writeFile)((0, pathe_1.join)(functionsPath, constants_1.ODB_FUNCTION_NAME, 'pages.js'), jsSource);
++    // ODB関数を作成しないので下記のコードが不要です。
++    // await (0, fs_extra_1.writeFile)((0, pathe_1.join)(functionsPath, constants_1.ODB_FUNCTION_NAME, 'pages.js'), jsSource);
+     await (0, fs_extra_1.writeFile)((0, pathe_1.join)(functionsPath, constants_1.HANDLER_FUNCTION_NAME, 'pages.js'), jsSource);
+ };
+ exports.generatePagesResolver = generatePagesResolver;
+diff --git a/node_modules/@netlify/plugin-nextjs/lib/index.js b/node_modules/@netlify/plugin-nextjs/lib/index.js
+index 44b9581..56eb1b2 100644
+--- a/node_modules/@netlify/plugin-nextjs/lib/index.js
++++ b/node_modules/@netlify/plugin-nextjs/lib/index.js
+@@ -128,14 +128,15 @@ const plugin = {
+             netlifyConfig,
+             nextConfig: { basePath, i18n },
+         });
+-        await (0, functions_1.setupImageFunction)({
+-            constants,
+-            imageconfig: images,
+-            netlifyConfig,
+-            basePath,
+-            remotePatterns: (0, utils_1.getRemotePatterns)(experimental, images),
+-            responseHeaders: (0, utils_1.getCustomImageResponseHeaders)(netlifyConfig.headers),
+-        });
++        // Netlifyの画像変換関数は無駄にエッジ関数を使っているので代わりに自作の関数を使います。
++        // await (0, functions_1.setupImageFunction)({
++        //     constants,
++        //     imageconfig: images,
++        //     netlifyConfig,
++        //     basePath,
++        //     remotePatterns: (0, utils_1.getRemotePatterns)(experimental, images),
++        //     responseHeaders: (0, utils_1.getCustomImageResponseHeaders)(netlifyConfig.headers),
++        // });
+         await (0, redirects_1.generateRedirects)({
+             netlifyConfig,
+             nextConfig: { basePath, i18n, trailingSlash, appDir },
+diff --git a/node_modules/@netlify/plugin-nextjs/lib/templates/getHandler.js b/node_modules/@netlify/plugin-nextjs/lib/templates/getHandler.js
+index bab4a76..1676090 100644
+--- a/node_modules/@netlify/plugin-nextjs/lib/templates/getHandler.js
++++ b/node_modules/@netlify/plugin-nextjs/lib/templates/getHandler.js
+@@ -70,12 +70,20 @@ const makeHandler = ({ conf, app, pageRoot, NextServer, staticManifest = [], blo
+         }, {
+             revalidateToken: customContext === null || customContext === void 0 ? void 0 : customContext.odb_refresh_hooks,
+         });
++
++        // キャッシュを削除するにはcontext.purge_api_tokenが必要ですが、contextはNext.js側で取得できないために環境変数を設定しています。
++        if (customContext?.purge_api_token) {
++          process.env.PURGE_API_TOKEN = customContext.purge_api_token;
++        }
++
+         const requestHandler = nextServer.getRequestHandler();
+         const server = new Server(async (req, res) => {
+             try {
+                 await requestHandler(req, res);
+             }
+-            catch {
++            catch (error) {
++                // なぜかエラーをログに出してくれないので追加しました。
++                console.error(error);
+                 throw new Error('Error handling request. See function logs for details.');
+             }
+         });
+diff --git a/node_modules/@netlify/plugin-nextjs/lib/templates/server.js b/node_modules/@netlify/plugin-nextjs/lib/templates/server.js
+index 007d74a..dbf8410 100644
+--- a/node_modules/@netlify/plugin-nextjs/lib/templates/server.js
++++ b/node_modules/@netlify/plugin-nextjs/lib/templates/server.js
+@@ -78,6 +78,12 @@ const getNetlifyNextServer = (NextServer) => {
+                         headers['x-prerender-revalidate'] = this.renderOpts.previewProps.previewModeId;
+                     }
+                 }
++
++                // Next.js 13.4.8以降はこのヘッダーがないと/_next/data/へのリクエストが404になってしまいます。
++                if (req.url.startsWith('/_next/data/')) {
++                    req.headers['x-invoke-path'] = req.url;
++                }
++
+                 return handler(req, res, parsedUrl);
+             };
+         }

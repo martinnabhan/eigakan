@@ -1,0 +1,16 @@
+diff --git a/node_modules/next/dist/shared/lib/router/router.js b/node_modules/next/dist/shared/lib/router/router.js
+index 904f2c5..6d5b6fc 100644
+--- a/node_modules/next/dist/shared/lib/router/router.js
++++ b/node_modules/next/dist/shared/lib/router/router.js
+@@ -1442,8 +1442,9 @@ class Router {
+             };
+         }
+         await Promise.all([
+-            this.pageLoader._isSsg(route).then((isSsg)=>{
+-                return isSsg ? fetchNextData({
++            this.pageLoader._isSsg(route).then(async (isSsg)=>{
++                // getServerSidePropsを使っているページはデフォルトでプリロードされないのでプリロード（とCDNでキャッシュ）される様に修正しています。
++                return isSsg || (!route.startsWith("/api") && (this.components[route] ? this.components[route].__N_SSP : (await this.fetchComponent(route)).mod.__N_SSP)) ? fetchNextData({
+                     dataHref: (data == null ? void 0 : data.json) ? data == null ? void 0 : data.dataHref : this.pageLoader.getDataHref({
+                         href: url,
+                         asPath: resolvedAs,

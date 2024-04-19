@@ -1,21 +1,98 @@
 import { Heading } from '@eigakan/components/Heading';
 import { Section } from '@eigakan/components/Section';
 import { prisma } from '@eigakan/db';
+import { cache } from '@eigakan/lib/cache';
+import { Page } from '@eigakan/types/page';
 import { ArrowRightIcon } from '@heroicons/react/16/solid';
 import { FilmIcon, MapPinIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { Area, Cinema, Movie } from '@prisma/client';
-import { GetStaticProps, NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-interface Props {
-  areas: Area[];
-  cinemas: Cinema[];
-  movies: Movie[];
-}
+const getServerSideProps = cache(async () => {
+  const [areas, showtimes, cinemas, movies] = await Promise.all([
+    prisma.area.findMany({
+      where: {
+        cinemas: {
+          some: {
+            showtimes: {
+              some: {
+                start: {
+                  gte: new Date(),
+                },
+              },
+            },
+          },
+        },
+      },
+    }),
+    prisma.showtime.findMany({
+      select: {
+        cinema: {
+          select: {
+            areaId: true,
+          },
+        },
+      },
+      where: {
+        start: {
+          gte: new Date(),
+        },
+      },
+    }),
+    prisma.cinema.findMany({
+      orderBy: {
+        showtimes: {
+          _count: 'desc',
+        },
+      },
+      where: {
+        showtimes: {
+          some: {
+            start: {
+              gte: new Date(),
+            },
+          },
+        },
+      },
+    }),
+    prisma.movie.findMany({
+      orderBy: {
+        showtimes: {
+          _count: 'desc',
+        },
+      },
+      where: {
+        showtimes: {
+          some: {
+            start: {
+              gte: new Date(),
+            },
+          },
+        },
+      },
+    }),
+  ]);
 
-const Index: NextPage<Props> = ({ areas, cinemas, movies }) => (
+  const areasWithCount = areas.map(area => ({ ...area, count: 0 }));
+
+  showtimes.forEach(({ cinema }) => {
+    const index = areasWithCount.findIndex(({ id }) => id === cinema.areaId);
+
+    areasWithCount[index].count += 1;
+  });
+
+  return {
+    props: {
+      areas: areasWithCount.sort((a, b) => (a.count > b.count ? -1 : 1)).map(({ count: _count, ...area }) => area),
+      cinemas,
+      movies,
+    },
+    tags: new Set(['Movie']),
+  };
+});
+
+const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
   <div className="bg-gradient-to-b from-red-700 to-red-600 pb-80">
     <div className="container flex flex-col">
       <div className="grid gap-y-14 lg:min-h-screen lg:grid-cols-2 lg:gap-x-10">
@@ -182,88 +259,6 @@ const Index: NextPage<Props> = ({ areas, cinemas, movies }) => (
 //   </ClientSide>
 // </div>
 
-const getStaticProps: GetStaticProps<Props> = async () => {
-  const [areas, showtimes, cinemas, movies] = await Promise.all([
-    prisma.area.findMany({
-      where: {
-        cinemas: {
-          some: {
-            showtimes: {
-              some: {
-                start: {
-                  gte: new Date(),
-                },
-              },
-            },
-          },
-        },
-      },
-    }),
-    prisma.showtime.findMany({
-      select: {
-        cinema: {
-          select: {
-            areaId: true,
-          },
-        },
-      },
-      where: {
-        start: {
-          gte: new Date(),
-        },
-      },
-    }),
-    prisma.cinema.findMany({
-      orderBy: {
-        showtimes: {
-          _count: 'desc',
-        },
-      },
-      where: {
-        showtimes: {
-          some: {
-            start: {
-              gte: new Date(),
-            },
-          },
-        },
-      },
-    }),
-    prisma.movie.findMany({
-      orderBy: {
-        showtimes: {
-          _count: 'desc',
-        },
-      },
-      where: {
-        showtimes: {
-          some: {
-            start: {
-              gte: new Date(),
-            },
-          },
-        },
-      },
-    }),
-  ]);
-
-  const areasWithCount = areas.map(area => ({ ...area, count: 0 }));
-
-  showtimes.forEach(({ cinema }) => {
-    const index = areasWithCount.findIndex(({ id }) => id === cinema.areaId);
-
-    areasWithCount[index].count += 1;
-  });
-
-  return {
-    props: {
-      areas: areasWithCount.sort((a, b) => (a.count > b.count ? -1 : 1)).map(({ count: _count, ...area }) => area),
-      cinemas,
-      movies,
-    },
-  };
-};
-
-export { getStaticProps };
+export { getServerSideProps };
 
 export default Index;

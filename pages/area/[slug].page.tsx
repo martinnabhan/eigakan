@@ -1,5 +1,5 @@
 import { Area as PrismaArea } from '@prisma/client';
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 
 interface Props {
   area: PrismaArea;
@@ -7,9 +7,7 @@ interface Props {
 
 const Area: NextPage<Props> = ({ area }) => <p>{area.label}</p>;
 
-const getStaticPaths: GetStaticPaths = async () => ({ fallback: 'blocking', paths: [] });
-
-const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
+const getServerSideProps: GetServerSideProps<Props> = async ({ params }) => {
   if (typeof params?.slug !== 'string') {
     return {
       notFound: true,
@@ -31,6 +29,6 @@ const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   };
 };
 
-export { getStaticPaths, getStaticProps };
+export { getServerSideProps };
 
 export default Area;

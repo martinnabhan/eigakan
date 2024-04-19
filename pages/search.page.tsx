@@ -6,7 +6,7 @@ import { areas } from '@eigakan/lib/areas';
 import { cinemas } from '@eigakan/lib/cinemas';
 import { Prisma } from '@prisma/client';
 import { addWeeks, endOfDay, format, startOfDay } from 'date-fns';
-import { GetStaticProps, NextPage } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -172,7 +172,7 @@ const Search: NextPage<Props> = ({ movies }) => {
   );
 };
 
-const getStaticProps: GetStaticProps<Props> = async () => ({
+const getServerSideProps: GetServerSideProps<Props> = async () => ({
   props: {
     movies: await prisma.movie.findMany({
       include: {
@@ -196,6 +196,6 @@ const getStaticProps: GetStaticProps<Props> = async () => ({
   },
 });
 
-export { getStaticProps };
+export { getServerSideProps };
 
 export default Search;

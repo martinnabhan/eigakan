@@ -1,0 +1,35 @@
+[build]
+  publish = ".next"
+
+[build.environment]
+  NODE_ENV = "production"
+
+[functions.___netlify-handler]
+  included_files = [
+    "node_modules/next/dist/server/future/route-modules/pages/vendored/contexts/amp-context*",
+    "node_modules/next/dist/server/future/route-modules/pages/vendored/contexts/head-manager-context*",
+  ]
+
+[functions.next-image-handler]
+  included_files = ["node_modules/@img/**/*"]
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=315360000, immutable"
+    Netlify-Cache-ID = "Asset"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/_next/image*"
+  query = { q = ':q', url = ':url', w = ':w' }
+  status = 200
+  to = "/next-image-handler:splat"
+
+# [[redirects]]
+#   force = true
+#   from = "https://eigakan.netlify.app/*"
+#   status = 301
+#   to = "https://eigakan.jp/:splat"
