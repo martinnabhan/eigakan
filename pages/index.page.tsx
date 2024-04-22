@@ -88,26 +88,27 @@ const getServerSideProps = cache(async () => {
       cinemas,
       movies,
     },
+    // TODO: tags
     tags: new Set(['Movie']),
   };
 });
 
 const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
-  <div className="bg-gradient-to-b from-red-700 to-red-600 pb-80">
+  <div className="py-10 pb-32 lg:py-0 lg:pb-80">
     <div className="container flex flex-col">
-      <div className="grid gap-y-14 lg:min-h-screen lg:grid-cols-2 lg:gap-x-10">
+      <div className="mb-32 grid gap-y-14 lg:mb-0 lg:min-h-screen lg:grid-cols-2 lg:gap-x-10">
         <div className="flex flex-col items-start justify-center">
-          <p className="mb-2">映画館.com</p>
+          <p className="mb-24 lg:mb-2">映画館.com</p>
 
-          <h1 className="mb-6 text-6xl font-bold leading-tight">
+          <h1 className="mb-6 text-4xl font-bold leading-tight lg:text-6xl">
             人気映画の上映を
             <br />
             簡単に探す
           </h1>
 
-          <p className="mb-10 text-lg font-light leading-loose text-red-200">
+          <p className="mb-10 font-light leading-loose text-red-200 lg:text-lg">
             映画館ドットコムは人気映画の上映をエリア、映画、映画館、
-            <br />
+            <br className="hidden lg:block" />
             日付と時間で簡単に検索できるサイトです。
           </p>
 
@@ -135,7 +136,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
         </div>
 
         <div className="flex grow items-center justify-center">
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-3 gap-4 lg:gap-5">
             {movies.slice(0, 6).map(({ id, poster, title }) => (
               <Link
                 key={id}
@@ -169,10 +170,10 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
         title="エリア、映画、映画館で簡単に検索"
       />
 
-      <div className="mb-56 grid w-full grid-cols-3 gap-x-5">
+      <div className="grid w-full gap-x-5 gap-y-16 lg:mb-56 lg:grid-cols-3 lg:gap-y-0">
         <Section Icon={MapPinIcon} title="人気エリアから探す">
           {areas.map(({ id, label, slug }) => (
-            <Link key={id} href={{ pathname: '/area/[slug]', query: { slug } }}>
+            <Link key={id} className="line-clamp-1" href={{ pathname: '/area/[slug]', query: { slug } }}>
               {label}
             </Link>
           ))}
@@ -180,7 +181,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
 
         <Section Icon={FilmIcon} title="上映中の人気映画から探す">
           {movies.map(({ id, title }) => (
-            <Link key={id} href={{ pathname: '/movie', query: { id } }}>
+            <Link key={id} className="line-clamp-1" href={{ pathname: '/movie', query: { id } }}>
               {title}
             </Link>
           ))}
@@ -188,53 +189,53 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
 
         <Section Icon={VideoCameraIcon} title="人気映画館から探す">
           {cinemas.map(({ id, label, slug }) => (
-            <Link key={id} href={{ pathname: '/cinema', query: { slug } }}>
+            <Link key={id} className="line-clamp-1" href={{ pathname: '/cinema', query: { slug } }}>
               {label}
             </Link>
           ))}
         </Section>
       </div>
-
-      <Heading
-        heading="豊かな機能"
-        text={
-          <>
-            会員登録すれば多くの便利な機能が使えるようになります。
-            <br />
-            会員登録してみませんか？
-          </>
-        }
-        title="会員には便利な機能が多い"
-      />
-
-      <div className="mb-56 grid w-full grid-cols-3 gap-5">
-        <Section Icon={MapPinIcon} title="機能１">
-          とても便利
-        </Section>
-
-        <Section Icon={MapPinIcon} title="機能２">
-          とても便利
-        </Section>
-
-        <Section Icon={MapPinIcon} title="機能３">
-          とても便利
-        </Section>
-
-        <Section Icon={MapPinIcon} title="機能４">
-          とても便利
-        </Section>
-
-        <Section Icon={MapPinIcon} title="機能５">
-          とても便利
-        </Section>
-
-        <Section Icon={MapPinIcon} title="機能６">
-          とても便利
-        </Section>
-      </div>
     </div>
   </div>
 );
+
+//      <Heading
+//        heading="豊かな機能"
+//        text={
+//          <>
+//            会員登録すれば多くの便利な機能が使えるようになります。
+//            <br />
+//            会員登録してみませんか？
+//          </>
+//        }
+//        title="会員には便利な機能が多い"
+//      />
+//
+//      <div className="mb-56 grid w-full grid-cols-3 gap-5">
+//        <Section Icon={MapPinIcon} title="機能１">
+//          とても便利
+//        </Section>
+//
+//        <Section Icon={MapPinIcon} title="機能２">
+//          とても便利
+//        </Section>
+//
+//        <Section Icon={MapPinIcon} title="機能３">
+//          とても便利
+//        </Section>
+//
+//        <Section Icon={MapPinIcon} title="機能４">
+//          とても便利
+//        </Section>
+//
+//        <Section Icon={MapPinIcon} title="機能５">
+//          とても便利
+//        </Section>
+//
+//        <Section Icon={MapPinIcon} title="機能６">
+//          とても便利
+//        </Section>
+//      </div>
 
 // <div>
 //   <h2>日付から探す</h2>

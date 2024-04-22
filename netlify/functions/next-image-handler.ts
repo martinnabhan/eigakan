@@ -1,5 +1,5 @@
-import type { Config } from '@netlify/functions';
 import nextConfig from '@eigakan/next.config';
+import type { Config } from '@netlify/functions';
 import { lookup } from 'mime-types';
 import sharp from 'sharp';
 

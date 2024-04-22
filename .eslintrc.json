@@ -8,13 +8,7 @@
     "next",
     "prettier"
   ],
-  "plugins": [
-    "no-relative-import-paths",
-    "sort-destructure-keys",
-    "sort-keys-fix",
-    "tailwindcss",
-    "typescript-sort-keys"
-  ],
+  "plugins": ["no-relative-import-paths", "sort-destructure-keys", "sort-keys-fix", "tailwindcss", "typescript-sort-keys"],
   "rules": {
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -22,10 +16,7 @@
         "argsIgnorePattern": "^_"
       }
     ],
-    "arrow-body-style": [
-      "error",
-      "as-needed"
-    ],
+    "arrow-body-style": ["error", "as-needed"],
     "import/order": [
       "error",
       {
@@ -40,9 +31,7 @@
     "no-console": [
       "error",
       {
-        "allow": [
-          "error"
-        ]
+        "allow": ["error"]
       }
     ],
     "no-else-return": [

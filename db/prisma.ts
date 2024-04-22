@@ -11,14 +11,14 @@ if (!global.prisma) {
   });
 
   if (process.env.NODE_ENV === 'development') {
-      global.prisma.$on(
-        // @ts-expect-error なぜか型のエラーが出ます。
-        'query',
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        require('prisma-query-log').createPrismaQueryEventHandler({ colorParameter: '\u001b[32m', colorQuery: '\u001b[36m' }),
-      );
-    }
+    global.prisma.$on(
+      // @ts-expect-error なぜか型のエラーが出ます。
+      'query',
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      require('prisma-query-log').createPrismaQueryEventHandler({ colorParameter: '\u001b[32m', colorQuery: '\u001b[36m' }),
+    );
   }
+}
 
 const { prisma } = global;
 

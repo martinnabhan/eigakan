@@ -18,10 +18,10 @@ const Section: FunctionComponent<Props> = ({ Icon, children, title }) => {
 
       <h2 className="mb-1 font-semibold leading-7">{title}</h2>
 
-      <div className="mb-6 flex flex-col text-red-200">{showMore ? children : children.slice(0, 6)}</div>
+      <div className="flex flex-col text-red-200">{showMore ? children : children.slice(0, 6)}</div>
 
       {!showMore && children.length > 6 && (
-        <button className="flex items-center gap-x-1 text-sm font-medium text-amber-500" onClick={() => setShowMore(true)}>
+        <button className="mt-6 flex items-center gap-x-1 text-sm font-medium text-amber-500" onClick={() => setShowMore(true)}>
           もっとみる
         </button>
       )}
