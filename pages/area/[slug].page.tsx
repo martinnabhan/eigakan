@@ -1,20 +1,16 @@
-import { Area as PrismaArea } from '@prisma/client';
-import { GetServerSideProps, NextPage } from 'next';
+import { PageLayout } from '@eigakan/components/PageLayout';
+import { prisma } from '@eigakan/db';
+import { cache } from '@eigakan/lib/cache';
+import { Page } from '@eigakan/types/page';
 
-interface Props {
-  area: PrismaArea;
-}
-
-const Area: NextPage<Props> = ({ area }) => <p>{area.label}</p>;
-
-const getServerSideProps: GetServerSideProps<Props> = async ({ params }) => {
+const getServerSideProps = cache(async params => {
   if (typeof params?.slug !== 'string') {
     return {
       notFound: true,
     };
   }
 
-  const area = await prisma?.area.findUnique({ where: { slug: params.slug } });
+  const area = await prisma.area.findUnique({ where: { slug: params.slug } });
 
   if (!area) {
     return {
@@ -26,7 +22,18 @@ const getServerSideProps: GetServerSideProps<Props> = async ({ params }) => {
     props: {
       area,
     },
+    tags: new Set([]),
   };
+});
+
+const Area: Page<typeof getServerSideProps> = ({ area }) => {
+  const title = `${area.label}の上映時間`;
+
+  return (
+    <PageLayout breadcrumbs={{ data: [{ name: title }], html: [<p>{title}</p>] }} title={title}>
+      Hello
+    </PageLayout>
+  );
 };
 
 export { getServerSideProps };

@@ -1,4 +1,6 @@
+import { Button } from '@eigakan/components/Button';
 import { Heading } from '@eigakan/components/Heading';
+import { MoviePosterLink } from '@eigakan/components/MoviePosterLink';
 import { Section } from '@eigakan/components/Section';
 import { prisma } from '@eigakan/db';
 import { cache } from '@eigakan/lib/cache';
@@ -6,7 +8,6 @@ import { Page } from '@eigakan/types/page';
 import { ArrowRightIcon } from '@heroicons/react/16/solid';
 import { FilmIcon, MapPinIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import Image from 'next/image';
 import Link from 'next/link';
 
 const getServerSideProps = cache(async () => {
@@ -94,9 +95,9 @@ const getServerSideProps = cache(async () => {
 });
 
 const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
-  <div className="py-10 pb-32 lg:py-0 lg:pb-80">
+  <div className="pt-10 lg:pt-0">
     <div className="container flex flex-col">
-      <div className="mb-32 grid gap-y-14 lg:mb-0 lg:min-h-screen lg:grid-cols-2 lg:gap-x-10">
+      <div className="mb-32 grid gap-y-14 lg:mb-36 lg:min-h-screen lg:grid-cols-2 lg:gap-x-10">
         <div className="flex flex-col items-start justify-center">
           <p className="mb-24 lg:mb-2">映画館.com</p>
 
@@ -112,46 +113,33 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
             日付と時間で簡単に検索できるサイトです。
           </p>
 
-          <div className="flex items-center gap-x-5">
-            <Link
-              className="flex items-center gap-x-1 rounded-md bg-amber-500 px-5 py-3 text-sm font-medium shadow lg:hover:shadow-md lg:active:shadow-inner"
-              href="/search"
-            >
-              上映を探す
-              <MagnifyingGlassIcon className="size-6" />
+          <div className="flex items-center gap-x-4">
+            <Link href="/search">
+              <Button>
+                上映を探す
+                <MagnifyingGlassIcon className="size-6" />
+              </Button>
             </Link>
 
             <a
-              className="flex items-center gap-x-1 text-sm font-medium"
               href="#search"
               onClick={event => {
                 event.preventDefault();
                 document.querySelector('#search')?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              もっとみる
-              <ArrowRightIcon className="size-4" />
+              <button className="flex items-center gap-x-1 rounded-md p-1 text-sm font-medium focus:outline-none focus:ring focus:ring-amber-500">
+                もっとみる
+                <ArrowRightIcon className="size-4" />
+              </button>
             </a>
           </div>
         </div>
 
         <div className="flex grow items-center justify-center">
           <div className="grid grid-cols-3 gap-4 lg:gap-5">
-            {movies.slice(0, 6).map(({ id, poster, title }) => (
-              <Link
-                key={id}
-                className="relative overflow-hidden rounded-xl shadow lg:hover:shadow-md lg:active:shadow-inner"
-                href={{ pathname: '/search', query: { movie: id } }}
-              >
-                <Image
-                  alt={title}
-                  className="h-full rounded-xl border-2 border-white object-cover"
-                  height={225}
-                  priority
-                  src={`https://image.tmdb.org/t/p/w300${poster}`}
-                  width={150}
-                />
-              </Link>
+            {movies.slice(0, 6).map(movie => (
+              <MoviePosterLink key={movie.id} {...movie} priority />
             ))}
           </div>
         </div>
@@ -170,7 +158,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
         title="エリア、映画、映画館で簡単に検索"
       />
 
-      <div className="grid w-full gap-x-5 gap-y-16 lg:mb-56 lg:grid-cols-3 lg:gap-y-0">
+      <div className="grid w-full gap-x-5 gap-y-16 lg:grid-cols-3 lg:gap-y-0">
         <Section Icon={MapPinIcon} title="人気エリアから探す">
           {areas.map(({ id, label, slug }) => (
             <Link key={id} className="line-clamp-1" href={{ pathname: '/area/[slug]', query: { slug } }}>
@@ -181,7 +169,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
 
         <Section Icon={FilmIcon} title="上映中の人気映画から探す">
           {movies.map(({ id, title }) => (
-            <Link key={id} className="line-clamp-1" href={{ pathname: '/movie', query: { id } }}>
+            <Link key={id} className="line-clamp-1" href={{ pathname: '/movie/[id]', query: { id } }}>
               {title}
             </Link>
           ))}
@@ -189,7 +177,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
 
         <Section Icon={VideoCameraIcon} title="人気映画館から探す">
           {cinemas.map(({ id, label, slug }) => (
-            <Link key={id} className="line-clamp-1" href={{ pathname: '/cinema', query: { slug } }}>
+            <Link key={id} className="line-clamp-1" href={{ pathname: '/cinema/[slug]', query: { slug } }}>
               {label}
             </Link>
           ))}

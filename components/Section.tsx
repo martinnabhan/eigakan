@@ -21,7 +21,10 @@ const Section: FunctionComponent<Props> = ({ Icon, children, title }) => {
       <div className="flex flex-col text-red-200">{showMore ? children : children.slice(0, 6)}</div>
 
       {!showMore && children.length > 6 && (
-        <button className="mt-6 flex items-center gap-x-1 text-sm font-medium text-amber-500" onClick={() => setShowMore(true)}>
+        <button
+          className="-ml-1 mt-5 flex items-center gap-x-1 rounded-md p-1 text-sm font-medium text-amber-500 focus:outline-none focus:ring focus:ring-amber-500"
+          onClick={() => setShowMore(true)}
+        >
           もっとみる
         </button>
       )}
