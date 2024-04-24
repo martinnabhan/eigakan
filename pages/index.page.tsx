@@ -97,7 +97,7 @@ const getServerSideProps = cache(async () => {
 const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
   <div className="pt-10 lg:pt-0">
     <div className="container flex flex-col">
-      <div className="mb-32 grid gap-y-14 lg:mb-36 lg:min-h-screen lg:grid-cols-2 lg:gap-x-10">
+      <div className="mb-32 grid gap-y-14 lg:mb-36 lg:min-h-[calc(100vh-80px)] lg:grid-cols-2 lg:gap-x-10">
         <div className="flex flex-col items-start justify-center">
           <p className="mb-24 lg:mb-2">映画館.com</p>
 

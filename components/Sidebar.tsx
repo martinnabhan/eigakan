@@ -14,7 +14,7 @@ const Sidebar = () => {
   const params = getParams(router.query);
 
   return (
-    <div className="w-1/4 shrink-0 divide-y divide-red-200">
+    <div className="container flex justify-around">
       <SidebarSection Icon={MapPinIcon} title="エリア">
         {Object.entries(areas).map(([slug, { label }]) => (
           <Link

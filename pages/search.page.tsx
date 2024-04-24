@@ -62,9 +62,7 @@ const Search: Page<typeof getServerSideProps> = props => {
 
   return (
     <PageLayout breadcrumbs={{ data: [{ name: title }], html: <p>{title}</p> }} title={title}>
-      <Sidebar />
-
-      <div className="grid grid-cols-5 gap-5">
+      <div className="grid grid-cols-7 gap-5">
         {movies.map((movie, index) => (
           <MoviePosterLink key={movie.id} {...movie} priority={index <= 10} />
         ))}

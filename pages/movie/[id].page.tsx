@@ -65,7 +65,7 @@ const Movie: Page<typeof getServerSideProps> = ({ movie: { poster, ...movie } })
   const defaults = getDefaults();
   const params = getParams(router.query);
   const showtimes = filterShowtimes({ defaults, params, showtimes: movie.showtimes });
-  const title = `${movie.title}の上映時間`;
+  const title = `映画「${movie.title}」の上映時間`;
 
   const days: { [key: string]: typeof showtimes } = {};
 
@@ -87,10 +87,8 @@ const Movie: Page<typeof getServerSideProps> = ({ movie: { poster, ...movie } })
       }}
       title={title}
     >
-      <Sidebar />
-
-      <div className="flex w-full flex-col gap-y-5">
-        <div className="flex gap-x-5">
+      <div className="flex gap-x-5">
+        <div className="flex gap-x-5 shrink-0 w-1/3 items-start">
           {poster && (
             <Image
               alt=""
@@ -110,27 +108,29 @@ const Movie: Page<typeof getServerSideProps> = ({ movie: { poster, ...movie } })
           </div>
         </div>
 
-        {Object.entries(days).map(([day, showtimes]) => (
-          <div key={day}>
-            <p className="mb-3 flex items-center gap-x-1">
-              <CalendarDaysIcon className="mt-0.5 size-5" />
-              {day}
-            </p>
+        <div className="w-3/4 flex flex-col gap-y-6">
+          {Object.entries(days).map(([day, showtimes]) => (
+            <div key={day}>
+              <p className="mb-3 flex items-center gap-x-1">
+                <CalendarDaysIcon className="mt-0.5 size-5" />
+                {day}
+              </p>
 
-            <div className="grid grid-cols-4 gap-3">
-              {showtimes.map(({ end, start }) => (
-                <a
-                  key={day + start}
-                  className="rounded bg-amber-500 px-1 py-2 text-center font-semibold shadow lg:hover:shadow-lg"
-                  href="/"
-                  target="_blank"
-                >
-                  {format(start, 'HH:mm')}〜{format(end, 'HH:mm')}
-                </a>
-              ))}
+              <div className="grid grid-cols-4 gap-3">
+                {showtimes.map(({ end, start }) => (
+                  <a
+                    key={day + start}
+                    className="rounded bg-amber-500 px-1 py-2 text-center font-semibold shadow lg:hover:shadow-lg"
+                    href="/"
+                    target="_blank"
+                  >
+                    {format(start, 'HH:mm')}〜{format(end, 'HH:mm')}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </PageLayout>
   );
