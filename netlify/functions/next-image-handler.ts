@@ -18,12 +18,12 @@ const handler = async (request: Request) => {
     return new Response('q、urlとwを指定してください。', { status: 400 });
   }
 
-  if (nextConfig.images.remotePatterns.length > 0 && !url.startsWith('/')) {
-    for (const { hostname, protocol } of nextConfig.images.remotePatterns) {
-      if (!url.startsWith(`${protocol}://${hostname}`)) {
-        return new Response('urlは許可されていません。', { status: 401 });
-      }
-    }
+  if (
+    !url.startsWith('/') &&
+    nextConfig.images.remotePatterns.length > 0 &&
+    !nextConfig.images.remotePatterns.some(({ hostname, protocol }) => url.startsWith(`${protocol}://${hostname}`))
+  ) {
+    return new Response('urlは許可されていません。', { status: 401 });
   }
 
   const response = await fetch(url.startsWith('/') ? `https://${request.headers.get('host')}/${url}` : url);

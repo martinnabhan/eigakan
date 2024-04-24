@@ -1,8 +1,8 @@
 diff --git a/node_modules/next/dist/shared/lib/router/router.js b/node_modules/next/dist/shared/lib/router/router.js
-index 904f2c5..6d5b6fc 100644
+index 0f9b8a1..bd7b947 100644
 --- a/node_modules/next/dist/shared/lib/router/router.js
 +++ b/node_modules/next/dist/shared/lib/router/router.js
-@@ -1442,8 +1442,9 @@ class Router {
+@@ -1436,8 +1436,9 @@ class Router {
              };
          }
          await Promise.all([
