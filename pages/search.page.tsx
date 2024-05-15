@@ -1,6 +1,5 @@
 import { MoviePosterLink } from '@eigakan/components/MoviePosterLink';
 import { PageLayout } from '@eigakan/components/PageLayout';
-import { Sidebar } from '@eigakan/components/Sidebar';
 import { prisma } from '@eigakan/db';
 import { cache } from '@eigakan/lib/cache';
 import { filterShowtimes } from '@eigakan/lib/filterShowtimes';
@@ -11,9 +10,11 @@ import { useRouter } from 'next/router';
 
 const title = '上映検索';
 
-const getServerSideProps = cache(async () => ({
-  props: {
-    movies: await prisma.movie.findMany({
+const getServerSideProps = cache(async () => {
+  const [areas, cinemas, movies] = await Promise.all([
+    prisma.area.findMany(),
+    prisma.cinema.findMany(),
+    prisma.movie.findMany({
       include: {
         showtimes: {
           include: {
@@ -39,12 +40,20 @@ const getServerSideProps = cache(async () => ({
         },
       },
     }),
-  },
-  // TODO: tags
-  tags: new Set(['Movie']),
-}));
+  ]);
 
-const Search: Page<typeof getServerSideProps> = props => {
+  return {
+    props: {
+      areas,
+      cinemas,
+      movies,
+    },
+    // TODO: tags
+    tags: new Set(['Movie']),
+  };
+});
+
+const Search: Page<typeof getServerSideProps> = ({ areas, cinemas, ...props }) => {
   const router = useRouter();
 
   const defaults = getDefaults();
@@ -61,7 +70,7 @@ const Search: Page<typeof getServerSideProps> = props => {
   });
 
   return (
-    <PageLayout breadcrumbs={{ data: [{ name: title }], html: <p>{title}</p> }} title={title}>
+    <PageLayout areas={areas} cinemas={cinemas} breadcrumbs={{ data: [{ name: title }], html: <p>{title}</p> }} title={title}>
       <div className="grid grid-cols-7 gap-5">
         {movies.map((movie, index) => (
           <MoviePosterLink key={movie.id} {...movie} priority={index <= 10} />

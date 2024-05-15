@@ -1,0 +1,23 @@
+jobs:
+  check:
+    concurrency:
+      cancel-in-progress: true
+      group: check-${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+      - run: npm ci
+      - run: npx turbo check
+    timeout-minutes: 15
+
+on:
+  push:
+    branches:
+      - 'bugfix/**'
+      - 'feature/**'
+      - 'renovate/**'

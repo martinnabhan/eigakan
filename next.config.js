@@ -1,6 +1,7 @@
 module.exports = {
   env: {
     NEXT_TELEMETRY_DISABLED: '1',
+    TZ: 'UTC',
   },
   eslint: {
     ignoreDuringBuilds: true,

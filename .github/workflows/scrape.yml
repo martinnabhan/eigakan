@@ -1,0 +1,27 @@
+jobs:
+  scrape:
+    concurrency:
+      cancel-in-progress: true
+      group: scrape-${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+      - run: npm ci
+      - run: npx playwright install chromium --with-deps
+      - uses: coactions/setup-xvfb@v1
+        with:
+          run: npx turbo scrape
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+    timeout-minutes: 30
+
+on: workflow_dispatch

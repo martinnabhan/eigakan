@@ -22,6 +22,9 @@
     "fix:prisma": {
       "inputs": ["db/schema.prisma"],
       "outputs": ["db/schema.prisma"]
+    },
+    "scrape": {
+      "dependsOn": ["prisma:generate"]
     }
   }
 }

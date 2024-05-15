@@ -1,5 +1,8 @@
 import 'tailwindcss/tailwind.css';
+import { AuthProvider } from '@eigakan/components/AuthProvider';
 import { Footer } from '@eigakan/components/Footer';
+import { ReCAPTCHAProvider } from '@eigakan/components/ReCAPTCHAProvider';
+import { TRPCProvider } from '@eigakan/components/TRPCProvider';
 import clsx from 'clsx';
 import { AppProps } from 'next/app';
 import { Noto_Sans_JP } from 'next/font/google';
@@ -8,7 +11,7 @@ import { FunctionComponent } from 'react';
 
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700'] });
 
-const App: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
+const App: FunctionComponent<AppProps> = ({ Component, pageProps: { session, ...pageProps }, router }) => (
   <>
     <Head>
       <link rel="manifest" href="manifest.json" />
@@ -16,8 +19,14 @@ const App: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
     </Head>
 
     <div className={clsx(notoSansJP.className, 'flex min-h-screen flex-col')}>
-      <Component {...pageProps} />
-      <Footer />
+      <AuthProvider session={session}>
+        <ReCAPTCHAProvider>
+          <TRPCProvider>
+            <Component {...pageProps} />
+            {!router.pathname.startsWith('/admin') && <Footer />}
+          </TRPCProvider>
+        </ReCAPTCHAProvider>
+      </AuthProvider>
     </div>
   </>
 );

@@ -8,44 +8,72 @@ datasource db {
 }
 
 model Area {
-  id      Int      @id @default(autoincrement())
-  cinemas Cinema[]
-  label   String   @unique
-  slug    String   @unique
+  cinemas   Cinema[]
+  label     String     @unique
+  showtimes Showtime[]
+  slug      String     @id @unique
 }
 
 model Cinema {
-  id        Int        @id @default(autoincrement())
-  area      Area       @relation(fields: [areaId], references: [id])
-  areaId    Int
-  label     String     @unique
+  area      Area         @relation(fields: [areaSlug], references: [slug])
+  areaSlug  String
+  name      String       @unique
+  names     CinemaName[]
   showtimes Showtime[]
-  slug      String     @unique
+  slug      String       @id @unique
+}
+
+model CinemaName {
+  cinema     Cinema?  @relation(fields: [cinemaSlug], references: [slug])
+  cinemaSlug String?
+  createdAt  DateTime @default(now())
+  name       String   @id @unique
+}
+
+model EmailVerification {
+  code      String
+  email     String   @unique
+  updatedAt DateTime @updatedAt()
 }
 
 model Feature {
-  id        Int        @id @default(autoincrement())
   label     String     @unique
   showtimes Showtime[]
-  slug      String     @unique
+  slug      String     @id @unique
 }
 
 model Movie {
-  id        Int        @id @default(autoincrement())
-  poster    String     @unique
+  id        String       @id @default(uuid())
+  poster    String       @unique
   showtimes Showtime[]
-  title     String     @unique
+  title     String       @unique
+  titles    MovieTitle[]
+}
+
+model MovieTitle {
+  createdAt DateTime @default(now())
+  movie     Movie?   @relation(fields: [movieId], references: [id])
+  movieId   String?
+  title     String   @id @unique
 }
 
 model Showtime {
-  id       Int       @id @default(autoincrement())
-  cinema   Cinema    @relation(fields: [cinemaId], references: [id])
-  cinemaId Int
-  end      DateTime
-  features Feature[]
-  movie    Movie     @relation(fields: [movieId], references: [id])
-  movieId  Int
-  start    DateTime
+  id         String    @id @default(uuid())
+  areas      Area[]
+  cinema     Cinema    @relation(fields: [cinemaSlug], references: [slug])
+  cinemaSlug String
+  end        DateTime
+  features   Feature[]
+  movie      Movie     @relation(fields: [movieId], references: [id])
+  movieId    String
+  start      DateTime
 
-  @@unique(fields: [cinemaId, movieId, start])
+  @@unique(fields: [cinemaSlug, movieId, start])
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  email     String   @unique
+  isAdmin   Boolean  @default(false)
 }

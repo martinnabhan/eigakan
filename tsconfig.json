@@ -30,6 +30,7 @@
     "compilerOptions": {
       "module": "CommonJS"
     },
-    "require": ["tsconfig-paths/register"]
+    "require": ["tsconfig-paths/register"],
+    "transpileOnly": true
   }
 }

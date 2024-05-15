@@ -88,7 +88,7 @@ const Movie: Page<typeof getServerSideProps> = ({ movie: { poster, ...movie } })
       title={title}
     >
       <div className="flex gap-x-5">
-        <div className="flex gap-x-5 shrink-0 w-1/3 items-start">
+        <div className="flex w-1/3 shrink-0 items-start gap-x-5">
           {poster && (
             <Image
               alt=""
@@ -108,7 +108,7 @@ const Movie: Page<typeof getServerSideProps> = ({ movie: { poster, ...movie } })
           </div>
         </div>
 
-        <div className="w-3/4 flex flex-col gap-y-6">
+        <div className="flex w-3/4 flex-col gap-y-6">
           {Object.entries(days).map(([day, showtimes]) => (
             <div key={day}>
               <p className="mb-3 flex items-center gap-x-1">

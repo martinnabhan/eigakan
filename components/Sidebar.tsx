@@ -1,14 +1,19 @@
 import { Checkbox } from '@eigakan/components/Checkbox';
 import { SidebarSection } from '@eigakan/components/SidebarSection';
-import { areas } from '@eigakan/lib/areas';
-import { cinemas } from '@eigakan/lib/cinemas';
 import { getDefaults } from '@eigakan/lib/getDefaults';
 import { getParams } from '@eigakan/lib/getParams';
 import { CalendarDaysIcon, ClockIcon, MapPinIcon, VideoCameraIcon } from '@heroicons/react/16/solid';
+import { Area, Cinema } from '@prisma/client';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { FunctionComponent } from 'react';
 
-const Sidebar = () => {
+interface Props {
+  areas: Area[];
+  cinemas: Cinema[];
+}
+
+const Sidebar: FunctionComponent<Props> = ({ areas, cinemas }) => {
   const defaults = getDefaults();
   const router = useRouter();
   const params = getParams(router.query);
@@ -37,7 +42,7 @@ const Sidebar = () => {
       </SidebarSection>
 
       <SidebarSection Icon={VideoCameraIcon} title="映画館">
-        {Object.entries(cinemas).map(([slug, { label }]) => (
+        {Object.entries(cinemas).map(([slug, { name }]) => (
           <Link
             key={slug}
             href={{
@@ -54,14 +59,14 @@ const Sidebar = () => {
             scroll={false}
             replace
           >
-            <Checkbox checked={params.cinema.includes(slug)}>{label}</Checkbox>
+            <Checkbox checked={params.cinema.includes(slug)}>{name}</Checkbox>
           </Link>
         ))}
       </SidebarSection>
 
       <SidebarSection Icon={CalendarDaysIcon} title="日付">
         <input
-          className="bg-red-700 text-red-200"
+          className="bg-red-700 text-white/70"
           max={params.dateEnd || defaults.dateEnd}
           min={defaults.dateStart}
           onChange={({ target }) => {
@@ -82,7 +87,7 @@ const Sidebar = () => {
           value={params.dateStart || defaults.dateStart}
         />
         <input
-          className="bg-red-700 text-red-200"
+          className="bg-red-700 text-white/70"
           min={params.dateStart || defaults.dateStart}
           type="date"
           onChange={({ target }) => {
@@ -105,7 +110,7 @@ const Sidebar = () => {
 
       <SidebarSection Icon={ClockIcon} title="時間">
         <input
-          className="bg-red-700 text-red-200"
+          className="bg-red-700 text-white/70"
           max={params.timeEnd || defaults.timeEnd}
           type="time"
           onChange={({ target }) => {
@@ -125,7 +130,7 @@ const Sidebar = () => {
           value={params.timeStart || defaults.timeStart}
         />
         <input
-          className="bg-red-700 text-red-200"
+          className="bg-red-700 text-white/70"
           min={params.timeStart || defaults.timeStart}
           type="time"
           onChange={({ target }) => {

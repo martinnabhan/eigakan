@@ -20,7 +20,8 @@ const handlers: Record<
   area: ({ params, showtime }) => params.area.length === 0 || params.area.includes(showtime.cinema.area.slug),
   cinema: ({ params, showtime }) => params.cinema.length === 0 || params.cinema.includes(showtime.cinema.slug),
   dateEnd: ({ defaults, params, showtime }) => showtime.end < endOfDay(parse(params.dateEnd || defaults.dateEnd, 'yyyy-MM-dd', new Date())),
-  dateStart: ({ defaults, params, showtime }) => showtime.start > startOfDay(parse(params.dateStart || defaults.dateStart, 'yyyy-MM-dd', new Date())),
+  dateStart: ({ defaults, params, showtime }) =>
+    showtime.start > startOfDay(parse(params.dateStart || defaults.dateStart, 'yyyy-MM-dd', new Date())),
   timeEnd: ({ defaults, params, showtime }) => {
     const [hours, minutes] = (params.timeEnd || defaults.timeEnd).split(':');
 

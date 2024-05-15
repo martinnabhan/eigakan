@@ -18,7 +18,7 @@ const Section: FunctionComponent<Props> = ({ Icon, children, title }) => {
 
       <h2 className="mb-1 font-semibold leading-7">{title}</h2>
 
-      <div className="flex flex-col text-red-200">{showMore ? children : children.slice(0, 6)}</div>
+      <div className="flex flex-col text-white/70">{showMore ? children : children.slice(0, 6)}</div>
 
       {!showMore && children.length > 6 && (
         <button

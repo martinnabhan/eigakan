@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const Footer = () => (
   <>
-    <div className="sticky bottom-0 border-t-2 border-red-200 bg-red-700">
+    <div className="sticky bottom-0 border-t-2 border-white bg-red-700">
       <div className="container flex h-20 w-full justify-around">
         <Link href="/search" className="w-1/4">
           <button className="flex size-full flex-col items-center justify-center gap-y-1 text-xs text-amber-500">
@@ -37,7 +37,7 @@ const Footer = () => (
     </div>
 
     <footer>
-      <div className="container py-16 text-xs text-red-200 text-center">
+      <div className="container py-16 text-center text-xs text-white/70">
         <p>&copy; {new Date().getFullYear()} 映画館ドットコム</p>
       </div>
     </footer>
