@@ -15,6 +15,7 @@ branches:
       required_status_checks:
         contexts:
           - check
+          - Netlify / Pages changed - eigakandotcom
         strict: true
       restrictions: null
 
