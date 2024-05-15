@@ -18,19 +18,23 @@ const getServerSideProps = cache(async params => {
     };
   }
 
+  const [areas, cinemas] = await Promise.all([prisma.area.findMany(), prisma.cinema.findMany()]);
+
   return {
     props: {
       area,
+      areas,
+      cinemas,
     },
-    tags: new Set([]),
+    tags: new Set(['Area']),
   };
 });
 
-const Area: Page<typeof getServerSideProps> = ({ area }) => {
+const Area: Page<typeof getServerSideProps> = ({ area, areas, cinemas }) => {
   const title = `${area.label}の上映時間`;
 
   return (
-    <PageLayout breadcrumbs={{ data: [{ name: title }], html: [<p>{title}</p>] }} title={title}>
+    <PageLayout areas={areas} breadcrumbs={{ data: [{ name: title }], html: [<p key="title">{title}</p>] }} cinemas={cinemas} title={title}>
       Hello
     </PageLayout>
   );

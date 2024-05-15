@@ -24,28 +24,34 @@ const getServerSideProps = cache(async params => {
       by: 'movieId',
       orderBy: { _count: { movieId: 'desc' } },
       take: 3,
-      where: { cinemaId: cinema.id },
+      where: { cinemaSlug: cinema.slug },
     })
   ).map(({ movieId }) => movieId);
 
-  const hmm = await prisma.movie.findMany({ where: { id: { in: movieIds } } });
+  const [areas, cinemas, hmm] = await Promise.all([
+    prisma.area.findMany(),
+    prisma.cinema.findMany(),
+    prisma.movie.findMany({ where: { id: { in: movieIds } } }),
+  ]);
 
   return {
     props: {
+      areas,
       cinema,
+      cinemas,
       movies: movieIds.flatMap(id => hmm.find(movie => movie.id === id) || []),
     },
-    tags: new Set([]),
+    tags: new Set(['Cinema']),
   };
 });
 
-const Cinema: Page<typeof getServerSideProps> = ({ cinema, movies }) => {
-  const title = `${cinema.label}の上映時間`;
+const Cinema: Page<typeof getServerSideProps> = ({ areas, cinema, cinemas, movies }) => {
+  const title = `${cinema.name}の上映時間`;
 
   return (
-    <PageLayout breadcrumbs={{ data: [{ name: title }], html: [<p>{title}</p>] }} col title={title}>
+    <PageLayout areas={areas} breadcrumbs={{ data: [{ name: title }], html: [<p key="title">{title}</p>] }} cinemas={cinemas} title={title}>
       <div className="mr-auto flex flex-col gap-y-3">
-        <h2 className="text-lg font-semibold">{cinema.label}の人気な映画</h2>
+        <h2 className="text-lg font-semibold">{cinema.name}の人気な映画</h2>
 
         <div className="grid grid-cols-4 items-center gap-x-5">
           {movies.map(movie => (

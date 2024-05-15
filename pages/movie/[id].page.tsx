@@ -1,11 +1,11 @@
 import { PageLayout } from '@eigakan/components/PageLayout';
-import { Sidebar } from '@eigakan/components/Sidebar';
 import { prisma } from '@eigakan/db';
 import { cache } from '@eigakan/lib/cache';
 import { filterShowtimes } from '@eigakan/lib/filterShowtimes';
 import { getDefaults } from '@eigakan/lib/getDefaults';
 import { getParams } from '@eigakan/lib/getParams';
 import { Page } from '@eigakan/types/page';
+import { validation } from '@eigakan/validation';
 import { CalendarDaysIcon } from '@heroicons/react/24/solid';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
@@ -14,7 +14,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 const getServerSideProps = cache(async params => {
-  if (typeof params?.id !== 'string' || !Number.isInteger(Number(params.id))) {
+  const id = validation.movieTitle.shape.movieId.safeParse(params?.id).data;
+
+  if (!id) {
     return {
       notFound: true,
     };
@@ -41,7 +43,7 @@ const getServerSideProps = cache(async params => {
       },
     },
     where: {
-      id: Number(params.id),
+      id,
     },
   });
 
@@ -51,15 +53,19 @@ const getServerSideProps = cache(async params => {
     };
   }
 
+  const [areas, cinemas] = await Promise.all([prisma.area.findMany(), prisma.cinema.findMany()]);
+
   return {
     props: {
+      areas,
+      cinemas,
       movie,
     },
     tags: new Set(['Movie']),
   };
 });
 
-const Movie: Page<typeof getServerSideProps> = ({ movie: { poster, ...movie } }) => {
+const Movie: Page<typeof getServerSideProps> = ({ areas, cinemas, movie: { poster, ...movie } }) => {
   const router = useRouter();
 
   const defaults = getDefaults();
@@ -81,10 +87,17 @@ const Movie: Page<typeof getServerSideProps> = ({ movie: { poster, ...movie } })
 
   return (
     <PageLayout
+      areas={areas}
       breadcrumbs={{
         data: [{ item: '/search', name: '上映検索' }, { name: title }],
-        html: [<Link href={{ pathname: '/search', query: router.query }}>上映検索</Link>, <p>{title}</p>],
+        html: [
+          <Link key="search" href={{ pathname: '/search', query: router.query }}>
+            上映検索
+          </Link>,
+          <p key="title">{title}</p>,
+        ],
       }}
+      cinemas={cinemas}
       title={title}
     >
       <div className="flex gap-x-5">
@@ -109,7 +122,7 @@ const Movie: Page<typeof getServerSideProps> = ({ movie: { poster, ...movie } })
         </div>
 
         <div className="flex w-3/4 flex-col gap-y-6">
-          {Object.entries(days).map(([day, showtimes]) => (
+          {Object.entries(days).map(([day, dayShowtimes]) => (
             <div key={day}>
               <p className="mb-3 flex items-center gap-x-1">
                 <CalendarDaysIcon className="mt-0.5 size-5" />
@@ -117,7 +130,7 @@ const Movie: Page<typeof getServerSideProps> = ({ movie: { poster, ...movie } })
               </p>
 
               <div className="grid grid-cols-4 gap-3">
-                {showtimes.map(({ end, start }) => (
+                {dayShowtimes.map(({ end, start }) => (
                   <a
                     key={day + start}
                     className="rounded bg-amber-500 px-1 py-2 text-center font-semibold shadow lg:hover:shadow-lg"
