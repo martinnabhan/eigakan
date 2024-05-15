@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from 'next';
 
-type CacheKey = 'Movie' | `Movie:${number}`;
+type CacheKey = 'Area' | 'Cinema' | 'Movie' | `Movie:${number}`;
 
 const cache =
   <T>(
