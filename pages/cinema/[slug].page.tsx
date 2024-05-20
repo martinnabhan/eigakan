@@ -45,11 +45,17 @@ const getServerSideProps = cache(async params => {
   };
 });
 
-const Cinema: Page<typeof getServerSideProps> = ({ areas, cinema, cinemas, movies }) => {
+const Cinema: Page<typeof getServerSideProps> = ({ cinema, movies }) => {
   const title = `${cinema.name}の上映時間`;
 
   return (
-    <PageLayout areas={areas} breadcrumbs={{ data: [{ name: title }], html: [<p key="title">{title}</p>] }} cinemas={cinemas} title={title}>
+    <PageLayout
+      areas={[]}
+      breadcrumbs={{ data: [{ name: title }], html: [<p key="title">{title}</p>] }}
+      cinemas={[]}
+      movies={movies}
+      title={title}
+    >
       <div className="mr-auto flex flex-col gap-y-3">
         <h2 className="text-lg font-semibold">{cinema.name}の人気な映画</h2>
 

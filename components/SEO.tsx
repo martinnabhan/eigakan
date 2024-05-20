@@ -8,7 +8,7 @@ interface Props {
 
 const SEO: FunctionComponent<Props> = ({ noindex, title }) => (
   <Head>
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {noindex && <meta content="noindex, nofollow" name="robots" />}
     <title>{title && `${title} | `}映画館.com</title>
   </Head>
 );

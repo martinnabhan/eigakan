@@ -38,8 +38,8 @@ const Code: FunctionComponent<Props> = ({ email, onSignIn }) => {
       <Input
         autoComplete="one-time-code"
         autoFocus
-        loading={loading}
         inputMode="numeric"
+        loading={loading}
         onChange={setCode}
         onEnter={handleClick}
         pattern="[0-9]*"

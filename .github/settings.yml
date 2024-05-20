@@ -1,5 +1,3 @@
-_extends: .github
-
 branches:
   - name: main
     protection:
@@ -15,9 +13,16 @@ branches:
       required_status_checks:
         contexts:
           - check
-          - Netlify / Pages changed - eigakandotcom
         strict: true
       restrictions: null
 
 repository:
-  private: true
+  allow_merge_commit: false
+  allow_rebase_merge: false
+  allow_squash_merge: true
+  default_branch: main
+  delete_branch_on_merge: true
+  has_issues: true
+  has_projects: false
+  has_wiki: false
+  private: false

@@ -31,7 +31,7 @@ const Breadcrumbs: FunctionComponent<Props> = ({ children, data }) => {
         </script>
       </Head>
 
-      <div className="container mb-8 flex items-center gap-x-5 overflow-x-scroll whitespace-nowrap">
+      <div className="container flex items-center gap-x-5 overflow-x-scroll whitespace-nowrap pb-2">
         <Link href="/">
           <HomeIcon className="size-5" />
         </Link>

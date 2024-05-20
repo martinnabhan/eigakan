@@ -46,12 +46,12 @@ const CRUD = <Record extends object>({
   };
 
   return (
-    <PageLayoutAdmin buttonProps={{ loading: !data, onClick: handleInsertClick }} title={title} subtitle={`全ての${title}のテーブルです。`}>
+    <PageLayoutAdmin buttonProps={{ loading: !data, onClick: handleInsertClick }} subtitle={`全ての${title}のテーブルです。`} title={title}>
       <Table
         columns={columns}
         rows={rows({
           DeleteButton: props => (
-            <Button disabled={props.disabled} loading={false} variant="underline" onClick={() => setLabel(props.label)}>
+            <Button disabled={props.disabled} loading={false} onClick={() => setLabel(props.label)} variant="underline">
               削除
             </Button>
           ),
@@ -59,11 +59,11 @@ const CRUD = <Record extends object>({
             <Button
               disabled={false}
               loading={false}
-              variant="underline"
               onClick={() => {
                 onClick();
                 openUpsertDialog();
               }}
+              variant="underline"
             >
               編集
             </Button>

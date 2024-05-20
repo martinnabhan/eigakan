@@ -60,10 +60,10 @@ const MovieTitles = () => {
       <Input
         autoFocus
         label="タイトル"
-        placeholder="オッペンハイマー【IMAXレーザーGT字幕版】R15+"
         loading={props.loading}
-        validator={validator.shape.title}
         onChange={setTitle}
+        placeholder="オッペンハイマー【IMAXレーザーGT字幕版】R15+"
+        validator={validator.shape.title}
         value={title}
       />
 

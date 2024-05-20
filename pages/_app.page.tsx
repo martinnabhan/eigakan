@@ -14,7 +14,7 @@ const notoSansJP = Noto_Sans_JP({ subsets: ['latin'], weight: ['300', '400', '50
 const App: FunctionComponent<AppProps> = ({ Component, pageProps: { session, ...pageProps }, router }) => (
   <>
     <Head>
-      <link rel="manifest" href="manifest.json" />
+      <link href="manifest.json" rel="manifest" />
       <meta content="#b91c1c" name="theme-color" />
     </Head>
 
