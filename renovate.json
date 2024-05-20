@@ -5,6 +5,10 @@
     {
       "allowedVersions": "4.41.3",
       "matchPackageNames": ["@netlify/plugin-nextjs"]
+    },
+    {
+      "allowedVersions": "8.x",
+      "matchPackageNames": ["eslint"]
     }
   ],
   "prConcurrentLimit": 1,
