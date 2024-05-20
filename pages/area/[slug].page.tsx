@@ -34,7 +34,13 @@ const Area: Page<typeof getServerSideProps> = ({ area, areas, cinemas }) => {
   const title = `${area.label}の上映時間`;
 
   return (
-    <PageLayout areas={areas} breadcrumbs={{ data: [{ name: title }], html: [<p key="title">{title}</p>] }} cinemas={cinemas} title={title}>
+    <PageLayout
+      areas={areas}
+      breadcrumbs={{ data: [{ name: title }], html: [<p key="title">{title}</p>] }}
+      cinemas={cinemas}
+      movies={[]}
+      title={title}
+    >
       Hello
     </PageLayout>
   );

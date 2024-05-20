@@ -1,7 +1,7 @@
 import { PageLayoutAdmin } from '@eigakan/components/PageLayoutAdmin';
 
 const Admin = () => (
-  <PageLayoutAdmin title="管理画面" subtitle="映画館.comの管理画面です。">
+  <PageLayoutAdmin subtitle="映画館.comの管理画面です。" title="管理画面">
     管理画面
   </PageLayoutAdmin>
 );

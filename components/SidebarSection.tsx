@@ -8,8 +8,8 @@ interface Props {
 }
 
 const SidebarSection: FunctionComponent<Props> = ({ Icon, children, title }) => (
-  <div className="flex w-1/4 flex-col gap-y-4 py-8">
-    <h2 className="flex items-center gap-x-2 font-semibold">
+  <div className="flex w-full flex-col gap-y-4">
+    <h2 className="flex items-center gap-x-2 whitespace-nowrap font-semibold">
       <Icon className="mt-0.5 size-4 text-amber-500" />
       {title}
     </h2>

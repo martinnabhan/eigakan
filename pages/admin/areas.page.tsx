@@ -57,20 +57,20 @@ const Areas = () => {
       <Input
         autoFocus
         label="ラベル"
-        placeholder="池袋"
         loading={props.loading}
-        validator={validator.shape.label}
         onChange={setLabel}
+        placeholder="池袋"
+        validator={validator.shape.label}
         value={label}
       />
 
       {!props.isUpdating && (
         <Input
           label="スラッグ"
-          placeholder="ikebukuro"
           loading={props.loading}
-          validator={validator.shape.slug}
           onChange={setSlug}
+          placeholder="ikebukuro"
+          validator={validator.shape.slug}
           value={slug}
         />
       )}

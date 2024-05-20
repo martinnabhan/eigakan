@@ -67,20 +67,20 @@ const Cinemas = () => {
       <Input
         autoFocus={!props.isUpdating}
         label="名前"
-        placeholder="グランドシネマサンシャイン池袋"
         loading={props.loading}
-        validator={validator.shape.name}
         onChange={setName}
+        placeholder="グランドシネマサンシャイン池袋"
+        validator={validator.shape.name}
         value={name}
       />
 
       {!props.isUpdating && (
         <Input
           label="スラッグ"
-          placeholder="gdcs"
           loading={props.loading}
-          validator={validator.shape.slug}
           onChange={setSlug}
+          placeholder="gdcs"
+          validator={validator.shape.slug}
           value={slug}
         />
       )}

@@ -1,6 +1,9 @@
 import { Breadcrumbs } from '@eigakan/components/Breadcrumbs';
 import { SEO } from '@eigakan/components/SEO';
 import { Sidebar } from '@eigakan/components/Sidebar';
+import { getDefaults } from '@eigakan/lib/getDefaults';
+import { getParams } from '@eigakan/lib/getParams';
+import { useRouter } from 'next/router';
 import { ComponentProps, FunctionComponent, ReactNode } from 'react';
 
 type Props = ComponentProps<typeof SEO> &
@@ -8,24 +11,37 @@ type Props = ComponentProps<typeof SEO> &
     breadcrumbs: Pick<ComponentProps<typeof Breadcrumbs>, 'data'> & {
       html: ComponentProps<typeof Breadcrumbs>['children'];
     };
-    children: ReactNode;
+    children:
+      | ReactNode
+      | ((args: {
+          defaults: ReturnType<typeof getDefaults>;
+          params: ReturnType<typeof getParams>;
+          query: ReturnType<typeof useRouter>['query'];
+        }) => ReactNode);
   };
 
-const PageLayout: FunctionComponent<Props> = ({ areas, breadcrumbs, children, cinemas, title }) => (
-  <>
-    <SEO title={title} />
+const PageLayout: FunctionComponent<Props> = ({ areas, breadcrumbs, children, cinemas, movies, title }) => {
+  const router = useRouter();
 
-    <div className="flex flex-col pt-16">
-      <Breadcrumbs data={breadcrumbs.data}>{breadcrumbs.html}</Breadcrumbs>
-      <Sidebar areas={areas} cinemas={cinemas} />
+  const defaults = getDefaults();
+  const params = getParams(router.query);
 
-      <div className="sticky top-0 z-10 border-b-2 border-white bg-red-700">
-        <h1 className="container py-6 text-4xl font-bold">{title}</h1>
+  return (
+    <>
+      <SEO title={title} />
+
+      <div className="flex flex-col pt-6">
+        <Breadcrumbs data={breadcrumbs.data}>{breadcrumbs.html}</Breadcrumbs>
+        <Sidebar areas={areas} cinemas={cinemas} movies={movies} />
+
+        <h1 className="container my-6 text-lg font-bold lg:my-12 lg:text-4xl">{title}</h1>
+
+        <div className="container mb-12 flex flex-col gap-y-8">
+          {typeof children === 'function' ? children({ defaults, params, query: router.query }) : children}
+        </div>
       </div>
-
-      <div className="container flex flex-col gap-y-8 py-12">{children}</div>
-    </div>
-  </>
-);
+    </>
+  );
+};
 
 export { PageLayout };

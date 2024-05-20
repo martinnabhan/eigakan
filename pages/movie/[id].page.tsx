@@ -71,7 +71,7 @@ const Movie: Page<typeof getServerSideProps> = ({ areas, cinemas, movie: { poste
   const defaults = getDefaults();
   const params = getParams(router.query);
   const showtimes = filterShowtimes({ defaults, params, showtimes: movie.showtimes });
-  const title = `映画「${movie.title}」の上映時間`;
+  const title = `${movie.title}の上映時間`;
 
   const days: { [key: string]: typeof showtimes } = {};
 
@@ -91,17 +91,18 @@ const Movie: Page<typeof getServerSideProps> = ({ areas, cinemas, movie: { poste
       breadcrumbs={{
         data: [{ item: '/search', name: '上映検索' }, { name: title }],
         html: [
-          <Link key="search" href={{ pathname: '/search', query: router.query }}>
+          <Link href={{ pathname: '/search', query: router.query }} key="search">
             上映検索
           </Link>,
           <p key="title">{title}</p>,
         ],
       }}
       cinemas={cinemas}
+      movies={[]}
       title={title}
     >
-      <div className="flex gap-x-5">
-        <div className="flex w-1/3 shrink-0 items-start gap-x-5">
+      <div className="relative flex flex-col gap-5 lg:flex-row lg:items-start">
+        <div className="flex w-1/3 shrink-0 items-start gap-x-5 lg:sticky lg:top-48">
           {poster && (
             <Image
               alt=""
@@ -121,7 +122,7 @@ const Movie: Page<typeof getServerSideProps> = ({ areas, cinemas, movie: { poste
           </div>
         </div>
 
-        <div className="flex w-3/4 flex-col gap-y-6">
+        <div className="flex flex-col gap-y-6 lg:w-3/4">
           {Object.entries(days).map(([day, dayShowtimes]) => (
             <div key={day}>
               <p className="mb-3 flex items-center gap-x-1">
@@ -129,12 +130,12 @@ const Movie: Page<typeof getServerSideProps> = ({ areas, cinemas, movie: { poste
                 {day}
               </p>
 
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-3 gap-3 lg:grid-cols-4">
                 {dayShowtimes.map(({ end, start }) => (
                   <a
-                    key={day + start}
                     className="rounded bg-amber-500 px-1 py-2 text-center font-semibold shadow lg:hover:shadow-lg"
                     href="/"
+                    key={day + start}
                     target="_blank"
                   >
                     {format(start, 'HH:mm')}〜{format(end, 'HH:mm')}

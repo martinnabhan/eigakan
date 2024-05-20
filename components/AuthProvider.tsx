@@ -7,7 +7,7 @@ interface Props {
 }
 
 const AuthProvider: FunctionComponent<Props> = ({ children, session }) => (
-  <SessionProvider refetchWhenOffline={false} refetchOnWindowFocus={false} session={session}>
+  <SessionProvider refetchOnWindowFocus={false} refetchWhenOffline={false} session={session}>
     {children}
   </SessionProvider>
 );

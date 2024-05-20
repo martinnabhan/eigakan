@@ -19,8 +19,8 @@ const Table: FunctionComponent<Props> = ({ columns, rows }) => (
 
     {rows?.map((row, index) => (
       <div
-        key={index}
         className="flex border-t border-t-zinc-200 bg-white px-5 py-3 last:rounded-b-md first:[&>p]:font-semibold first:[&>p]:text-zinc-900"
+        key={index}
       >
         {row}
       </div>

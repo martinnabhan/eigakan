@@ -31,8 +31,8 @@ const DeleteDialog: FunctionComponent<Props> = ({ label, onClose, onDelete }) =>
         onClick: handleClick,
         variant: 'red',
       }}
-      tight
       onClose={onClose}
+      tight
     >
       <div className="flex items-center gap-x-4">
         <div className="flex size-10 items-center justify-center rounded-full bg-red-100">

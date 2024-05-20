@@ -70,6 +70,7 @@
         "next": "*"
       }
     ],
+    "react/jsx-sort-props": "error",
     "require-await": "error",
     "sort-destructure-keys/sort-destructure-keys": "error",
     "sort-keys": "error",

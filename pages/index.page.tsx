@@ -99,7 +99,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => {
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="pt-10 lg:pt-0">
+    <div className="pb-16 pt-10 lg:pt-0">
       <div className="container flex flex-col">
         <div className="mb-32 grid gap-y-14 lg:mb-36 lg:min-h-[calc(100vh-80px)] lg:grid-cols-2 lg:gap-x-10">
           <div className="flex flex-col items-start justify-center">
@@ -118,8 +118,8 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => {
             </p>
 
             <div className="flex items-center gap-x-4">
-              <Link href="/search">
-                <Button className="w-36" disabled={false} onClick={() => setLoading(true)} loading={loading}>
+              <Link href="/showtimes">
+                <Button className="w-36" disabled={false} loading={loading} onClick={() => setLoading(true)}>
                   上映を探す
                   <MagnifyingGlassIcon className="size-6" />
                 </Button>
@@ -165,7 +165,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => {
         <div className="grid w-full gap-x-5 gap-y-16 lg:grid-cols-3 lg:gap-y-0">
           <Section Icon={MapPinIcon} title="人気エリアから探す">
             {areas.map(({ label, slug }) => (
-              <Link key={slug} className="line-clamp-1" href={{ pathname: '/area/[slug]', query: { slug } }}>
+              <Link className="line-clamp-1" href={{ pathname: '/area/[slug]', query: { slug } }} key={slug}>
                 {label}
               </Link>
             ))}
@@ -173,7 +173,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => {
 
           <Section Icon={FilmIcon} title="上映中の人気映画から探す">
             {movies.map(({ id, title }) => (
-              <Link key={id} className="line-clamp-1" href={{ pathname: '/movie/[id]', query: { id } }}>
+              <Link className="line-clamp-1" href={{ pathname: '/movie/[id]', query: { id } }} key={id}>
                 {title}
               </Link>
             ))}
@@ -181,7 +181,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => {
 
           <Section Icon={VideoCameraIcon} title="人気映画館から探す">
             {cinemas.map(({ name, slug }) => (
-              <Link key={slug} className="line-clamp-1" href={{ pathname: '/cinema/[slug]', query: { slug } }}>
+              <Link className="line-clamp-1" href={{ pathname: '/cinema/[slug]', query: { slug } }} key={slug}>
                 {name}
               </Link>
             ))}
@@ -191,67 +191,6 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => {
     </div>
   );
 };
-
-//      <Heading
-//        heading="豊かな機能"
-//        text={
-//          <>
-//            会員登録すれば多くの便利な機能が使えるようになります。
-//            <br />
-//            会員登録してみませんか？
-//          </>
-//        }
-//        title="会員には便利な機能が多い"
-//      />
-//
-//      <div className="mb-56 grid w-full grid-cols-3 gap-5">
-//        <Section Icon={MapPinIcon} title="機能１">
-//          とても便利
-//        </Section>
-//
-//        <Section Icon={MapPinIcon} title="機能２">
-//          とても便利
-//        </Section>
-//
-//        <Section Icon={MapPinIcon} title="機能３">
-//          とても便利
-//        </Section>
-//
-//        <Section Icon={MapPinIcon} title="機能４">
-//          とても便利
-//        </Section>
-//
-//        <Section Icon={MapPinIcon} title="機能５">
-//          とても便利
-//        </Section>
-//
-//        <Section Icon={MapPinIcon} title="機能６">
-//          とても便利
-//        </Section>
-//      </div>
-
-// <div>
-//   <h2>日付から探す</h2>
-//
-//   <ClientSide>
-//     {(() => {
-//       const today = new Date();
-//       const todayString = format(today, 'yyyy-MM-dd');
-//       const tomorrow = addDays(today, 1);
-//       const tomorrowString = format(tomorrow, 'yyyy-MM-dd');
-//
-//       return (
-//         <>
-//           <Link href={{ pathname: '/search', query: { dateEnd: todayString, dateStart: todayString } }}>今日</Link>
-//           <Link href={{ pathname: '/search', query: { dateEnd: tomorrowString, dateStart: tomorrowString } }}>明日</Link>
-//           <Link href={{ pathname: '/search', query: { dateEnd: format(addDays(today, 7), 'yyyy-MM-dd'), dateStart: todayString } }}>
-//             今週
-//           </Link>
-//         </>
-//       );
-//     })()}
-//   </ClientSide>
-// </div>
 
 export { getServerSideProps };
 

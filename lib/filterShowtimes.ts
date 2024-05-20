@@ -1,9 +1,9 @@
 import { getDefaults } from '@eigakan/lib/getDefaults';
 import { getParams } from '@eigakan/lib/getParams';
-import { Prisma } from '@prisma/client';
+import { Movie, Prisma, Showtime as PrismaShowtime } from '@prisma/client';
 import { endOfDay, parse, setHours, setMinutes, startOfDay } from 'date-fns';
 
-type Showtime = Prisma.ShowtimeGetPayload<{ include: { cinema: { include: { area: true } } } }>;
+type Showtime = PrismaShowtime & { cinema?: Prisma.CinemaGetPayload<{ include: { area: true } }>; movie?: Movie };
 
 const handlers: Record<
   keyof ReturnType<typeof getParams>,
@@ -17,11 +17,13 @@ const handlers: Record<
     showtime: Showtime;
   }) => boolean
 > = {
-  area: ({ params, showtime }) => params.area.length === 0 || params.area.includes(showtime.cinema.area.slug),
-  cinema: ({ params, showtime }) => params.cinema.length === 0 || params.cinema.includes(showtime.cinema.slug),
+  area: ({ params, showtime }) => Boolean(showtime.cinema && (params.area.length === 0 || params.area.includes(showtime.cinema.area.slug))),
+  cinema: ({ params, showtime }) =>
+    Boolean(showtime.cinema && (params.cinema.length === 0 || params.cinema.includes(showtime.cinema.slug))),
   dateEnd: ({ defaults, params, showtime }) => showtime.end < endOfDay(parse(params.dateEnd || defaults.dateEnd, 'yyyy-MM-dd', new Date())),
   dateStart: ({ defaults, params, showtime }) =>
     showtime.start > startOfDay(parse(params.dateStart || defaults.dateStart, 'yyyy-MM-dd', new Date())),
+  movie: ({ params, showtime }) => Boolean(showtime.movie && (params.movie.length === 0 || params.movie.includes(showtime.movie.id))),
   timeEnd: ({ defaults, params, showtime }) => {
     const [hours, minutes] = (params.timeEnd || defaults.timeEnd).split(':');
 

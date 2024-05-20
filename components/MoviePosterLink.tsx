@@ -11,9 +11,9 @@ const MoviePosterLink: FunctionComponent<Props> = ({ id, poster, priority, title
 
   return (
     <Link
-      key={id}
       className="relative overflow-hidden rounded-xl shadow lg:hover:shadow-lg lg:active:shadow-inner"
       href={{ pathname: '/movie/[id]', query: { ...router.query, id } }}
+      key={id}
     >
       <Image
         alt={title}

@@ -45,7 +45,6 @@ const SignInDialog: FunctionComponent<Props> = ({ onClose }) => {
 
   return (
     <Dialog
-      onClose={onClose}
       buttonProps={{
         children: '送信する',
         className: 'w-24',
@@ -53,14 +52,15 @@ const SignInDialog: FunctionComponent<Props> = ({ onClose }) => {
         loading,
         onClick: handleClick,
       }}
+      onClose={onClose}
     >
       {verificationSent ? (
         <Input
           autoComplete="one-time-code"
           autoFocus
+          inputMode="numeric"
           label="認証コード"
           loading={loading}
-          inputMode="numeric"
           onChange={setCode}
           onEnter={handleClick}
           pattern="[0-9]*"

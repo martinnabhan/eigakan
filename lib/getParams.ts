@@ -6,11 +6,13 @@ const getParams = (query: ParsedUrlQuery) => {
     cinema: string[];
     dateEnd?: string;
     dateStart?: string;
+    movie: string[];
     timeEnd?: string;
     timeStart?: string;
   } = {
     area: [],
     cinema: [],
+    movie: [],
   };
 
   const setArrayValue = (
@@ -22,7 +24,7 @@ const getParams = (query: ParsedUrlQuery) => {
     }
   };
 
-  const setValue = (key: Exclude<keyof typeof params, 'area' | 'cinema'>, value: string | string[] | undefined) => {
+  const setValue = (key: Exclude<keyof typeof params, 'area' | 'cinema' | 'movie'>, value: string | string[] | undefined) => {
     if (typeof value === 'string') {
       params[key] = value;
     }
@@ -33,6 +35,7 @@ const getParams = (query: ParsedUrlQuery) => {
     cinema: () => setArrayValue('cinema', query['cinema']),
     dateEnd: () => setValue('dateEnd', query['dateEnd']),
     dateStart: () => setValue('dateStart', query['dateStart']),
+    movie: () => setArrayValue('movie', query['movie']),
     timeEnd: () => setValue('timeEnd', query['timeEnd']),
     timeStart: () => setValue('timeStart', query['timeStart']),
   };
