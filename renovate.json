@@ -12,5 +12,6 @@
     }
   ],
   "prConcurrentLimit": 1,
+  "schedule": ["after 11am every monday", "before 5pm every monday"],
   "timezone": "Asia/Tokyo"
 }
