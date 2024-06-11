@@ -1,9 +1,8 @@
 import { prisma } from '@eigakan/db';
 import { test } from '@playwright/test';
-import { Movie } from '@prisma/client';
+import { Movie, MovieTitle } from '@prisma/client';
 import { parse, setHours, setMinutes, setSeconds } from 'date-fns';
 import { BrowserContext, Locator, chromium } from 'playwright';
-import { TMDB } from 'tmdb-ts';
 
 // const featureMap = {
 //   '4Kレストア版': '4Kレストア版',
@@ -21,33 +20,46 @@ import { TMDB } from 'tmdb-ts';
 //   製作70周年: '製作70周年',
 // };
 
-const tmdb = new TMDB(
-  'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3ZmU4MTZhOTUwMGEzNzZjZTQ4MDA1MjE1ODNhZDViNyIsInN1YiI6IjU5ODcwMWI1YzNhMzY4Mzc1ZjAwY2U2MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.eD86wBxafAhSqsnS1HZhoYtw9gUMmELMyi4gNmbetQs',
-);
-
 const url = 'https://www.cinemasunshine.co.jp';
 
-const parseCinema = async (context: BrowserContext, link: Locator, movie: Pick<Movie, 'id' | 'title'>) => {
+const parseCinema = async (
+  context: BrowserContext,
+  link: Locator,
+  movie: Pick<Movie, 'id' | 'title'>,
+  movieTitle: Pick<MovieTitle, 'title'>,
+) => {
   const name = ((await link.textContent()) || '').trim();
 
   if (!name) {
     throw new Error('映画館の名前を取得できませんでした。');
   }
 
-  if (name === '4DX' || name === 'IMAX') {
+  if (name === '4DX' || name === 'IMAX' || name === 'SCREEN X' || name === 'ULTRA 4DX') {
     return;
   }
 
-  const cinemaName = await prisma.cinemaName.findUnique({ select: { cinemaSlug: true }, where: { name } });
+  const cinemaName = await prisma.cinemaName.findUnique({
+    select: {
+      cinema: {
+        select: {
+          areaSlug: true,
+          slug: true,
+        },
+      },
+    },
+    where: {
+      name,
+    },
+  });
 
   if (!cinemaName) {
     await prisma.cinemaName.create({ data: { name } });
-    console.info(`新しい映画館の名前を作成しました：「${name}」`);
+    console.info(`新しい映画館名を作成しました：「${name}」`);
     return;
   }
 
-  if (!cinemaName.cinemaSlug) {
-    console.info(`映画館の名前の映画館が不明のためにスキップしました：「${name}」`);
+  if (!cinemaName.cinema) {
+    console.info(`映画館が不明のためにスキップしました：「${name}」`);
     return;
   }
 
@@ -93,23 +105,25 @@ const parseCinema = async (context: BrowserContext, link: Locator, movie: Pick<M
         if (
           (await prisma.showtime.count({
             where: {
-              cinemaSlug: cinemaName.cinemaSlug,
+              cinemaSlug: cinemaName.cinema.slug,
               movieId: movie.id,
               start,
             },
           })) !== 0
         ) {
-          console.info(`スキップ：${cinemaName.cinemaSlug}、${movie.id}、${start}`);
+          console.info(`スキップ：${cinemaName.cinema.slug}、${movie.id}、${start}`);
           continue;
         }
 
-        console.info(`作成：${cinemaName.cinemaSlug}、${movie.id}、${start}`);
+        console.info(`作成：${cinemaName.cinema.slug}、${movie.id}、${start}`);
 
         await prisma.showtime.create({
           data: {
-            cinemaSlug: cinemaName.cinemaSlug,
+            areaSlug: cinemaName.cinema.areaSlug,
+            cinemaSlug: cinemaName.cinema.slug,
             end,
             movieId: movie.id,
+            movieTitleTitle: movieTitle.title,
             start,
           },
         });
@@ -127,37 +141,16 @@ const parseMovie = async (context: BrowserContext, link: Locator) => {
     throw new Error('映画のタイトルを取得できませんでした。');
   }
 
-  let movieTitle = await prisma.movieTitle.findUnique({ select: { movieId: true }, where: { title } });
+  const movieTitle = await prisma.movieTitle.findUnique({ select: { movieId: true, title: true }, where: { title } });
 
   if (!movieTitle) {
-    movieTitle = await prisma.movieTitle.create({ data: { title } });
-
+    await prisma.movieTitle.create({ data: { title } });
     console.info(`新しい映画タイトルを作成しました：「${title}」`);
-
-    const { results } = await tmdb.search.movies({ language: 'ja-JP', query: title });
-
-    if (results.length > 0) {
-      movieTitle.movieId = (
-        await prisma.movie.create({
-          data: {
-            poster: results[0].poster_path,
-            title: results[0].title,
-            titles: {
-              connect: {
-                title,
-              },
-            },
-          },
-          select: {
-            id: true,
-          },
-        })
-      ).id;
-    }
+    return;
   }
 
   if (!movieTitle.movieId) {
-    console.info(`映画タイトルの映画が不明のためにスキップしました：「${title}」`);
+    console.info(`映画が不明のためにスキップしました：「${title}」`);
     return;
   }
 
@@ -174,7 +167,7 @@ const parseMovie = async (context: BrowserContext, link: Locator) => {
   await page.goto(url + href);
 
   for (const cinemaLink of await page.locator('.theaterlink-box .link').all()) {
-    await parseCinema(context, cinemaLink, { id: movieTitle.movieId, title });
+    await parseCinema(context, cinemaLink, { id: movieTitle.movieId, title }, movieTitle);
   }
 };
 

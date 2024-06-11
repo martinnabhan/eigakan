@@ -85,7 +85,7 @@
     "fix:prisma": "prisma format",
     "postinstall": "patch-package",
     "prisma:generate": "prisma generate",
-    "scrape": "TZ=UTC playwright test",
+    "scrape": "TZ=Asia/Tokyo playwright test",
     "start": "next start",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build"

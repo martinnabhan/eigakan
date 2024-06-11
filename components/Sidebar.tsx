@@ -4,14 +4,14 @@ import { getDefaults } from '@eigakan/lib/getDefaults';
 import { getParams } from '@eigakan/lib/getParams';
 import { CalendarDaysIcon, ClockIcon, MapPinIcon, VideoCameraIcon } from '@heroicons/react/16/solid';
 import { FilmIcon } from '@heroicons/react/24/outline';
-import { Area, Cinema, Movie } from '@prisma/client';
+import { Area, Movie, Prisma } from '@prisma/client';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FunctionComponent } from 'react';
 
 interface Props {
   areas: Area[];
-  cinemas: Cinema[];
+  cinemas: Prisma.CinemaGetPayload<{ select: { area: { select: { label: true } }; name: true; slug: true } }>[];
   movies: Movie[];
 }
 
@@ -71,7 +71,7 @@ const Sidebar: FunctionComponent<Props> = ({ areas, cinemas, movies }) => {
 
         {cinemas.length > 0 && (
           <SidebarSection Icon={VideoCameraIcon} title="映画館">
-            {cinemas.map(({ name, slug }) => (
+            {cinemas.map(({ area, name, slug }) => (
               <Link
                 href={{
                   pathname: router.pathname,
@@ -88,7 +88,9 @@ const Sidebar: FunctionComponent<Props> = ({ areas, cinemas, movies }) => {
                 scroll={false}
                 shallow
               >
-                <Checkbox checked={params.cinema.includes(slug)}>{name}</Checkbox>
+                <Checkbox checked={params.cinema.includes(slug)}>
+                  {name}（{area.label}）
+                </Checkbox>
               </Link>
             ))}
           </SidebarSection>

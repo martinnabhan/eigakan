@@ -19,7 +19,7 @@ const Footer = () => {
               )}
             >
               <MagnifyingGlassIcon className="size-6" />
-              上映検索
+              上映を探す
             </button>
           </Link>
 
@@ -31,7 +31,7 @@ const Footer = () => {
               )}
             >
               <MapPinIcon className="size-6" />
-              エリア
+              エリアを探す
             </button>
           </Link>
 
@@ -43,7 +43,7 @@ const Footer = () => {
               )}
             >
               <FilmIcon className="size-6" />
-              映画
+              映画を探す
             </button>
           </Link>
 
@@ -55,7 +55,7 @@ const Footer = () => {
               )}
             >
               <VideoCameraIcon className="size-6" />
-              映画館
+              映画館を探す
             </button>
           </Link>
         </div>

@@ -8,19 +8,16 @@ import { validation } from '@eigakan/validation';
 import { useState } from 'react';
 
 const MovieTitles = () => {
-  const [movieId, setMovieId] = useState('');
+  const [movieId, setMovieId] = useState<number | null>(null);
   const [title, setTitle] = useState('');
 
   const { data: movies } = useQuery(client.admin.queries.movies);
 
-  const { props, validator } = useCRUD({
+  const { props } = useCRUD({
     input: { movieId, title },
-    isEqual: ({ data, input }) => data.some(existing => input.title === existing.title),
+    isEqual: ({ data, input }) => data.some(existing => input.movieId === existing.movie?.id && input.title === existing.title),
     mutations: client.admin.mutations.movieTitle,
-    onInsertClick: () => {
-      setMovieId(movies && movies.length > 0 ? movies[0].id : '');
-      setTitle('');
-    },
+    onDelete: () => title,
     onSuccess: utils => utils.admin.queries.movieTitles.invalidate(),
     query: client.admin.queries.movieTitles,
     validator: validation.movieTitle,
@@ -46,33 +43,29 @@ const MovieTitles = () => {
             <div className="flex w-24 shrink-0 gap-x-2">
               <EditButton
                 onClick={() => {
-                  setMovieId(movieTitle.movie?.id || '');
+                  setMovieId(movieTitle.movie?.id || null);
                   setTitle(movieTitle.title);
                 }}
               />
-              <DeleteButton disabled={false} label={movieTitle.title} />
+              <DeleteButton disabled={false} label={movieTitle.title} onClick={() => setTitle(movieTitle.title)} />
             </div>
           </>
         ))
       }
-      title="映画館の名前"
+      title="映画館名"
     >
-      <Input
-        autoFocus
-        label="タイトル"
-        loading={props.loading}
-        onChange={setTitle}
-        placeholder="オッペンハイマー【IMAXレーザーGT字幕版】R15+"
-        validator={validator.shape.title}
-        value={title}
-      />
+      <Input disabled label="タイトル" value={title} />
 
       <Select
+        autoFocus
         label="映画"
         loading={props.loading}
-        onChange={setMovieId}
-        options={movies?.map(movie => ({ label: movie.title, value: movie.id }))}
-        value={movieId}
+        onChange={value => setMovieId(value ? Number(value) : null)}
+        options={[
+          { label: '未登録', value: '' },
+          ...(movies ? movies.map(movie => ({ label: movie.title, value: movie.id.toString() })) : []),
+        ]}
+        value={movieId ? movieId.toString() : ''}
       />
     </CRUD>
   );

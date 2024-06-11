@@ -17,10 +17,12 @@ model Area {
 model Cinema {
   area      Area         @relation(fields: [areaSlug], references: [slug])
   areaSlug  String
-  name      String       @unique
+  name      String
   names     CinemaName[]
   showtimes Showtime[]
   slug      String       @id @unique
+
+  @@unique([areaSlug, name])
 }
 
 model CinemaName {
@@ -37,13 +39,13 @@ model EmailVerification {
 }
 
 model Feature {
-  label     String     @unique
-  showtimes Showtime[]
-  slug      String     @id @unique
+  label       String       @unique
+  movieTitles MovieTitle[]
+  slug        String       @id @unique
 }
 
 model Movie {
-  id        String       @id @default(uuid())
+  id        Int          @id
   poster    String       @unique
   showtimes Showtime[]
   title     String       @unique
@@ -51,24 +53,28 @@ model Movie {
 }
 
 model MovieTitle {
-  createdAt DateTime @default(now())
-  movie     Movie?   @relation(fields: [movieId], references: [id])
-  movieId   String?
-  title     String   @id @unique
+  createdAt DateTime   @default(now())
+  features  Feature[]
+  movie     Movie?     @relation(fields: [movieId], references: [id])
+  movieId   Int?
+  showtimes Showtime[]
+  title     String     @id @unique
 }
 
 model Showtime {
-  id         String    @id @default(uuid())
-  areas      Area[]
-  cinema     Cinema    @relation(fields: [cinemaSlug], references: [slug])
-  cinemaSlug String
-  end        DateTime
-  features   Feature[]
-  movie      Movie     @relation(fields: [movieId], references: [id])
-  movieId    String
-  start      DateTime
+  id              String     @id @default(uuid())
+  area            Area       @relation(fields: [areaSlug], references: [slug])
+  areaSlug        String
+  cinema          Cinema     @relation(fields: [cinemaSlug], references: [slug])
+  cinemaSlug      String
+  end             DateTime
+  movie           Movie      @relation(fields: [movieId], references: [id])
+  movieId         Int
+  movieTitle      MovieTitle @relation(fields: [movieTitleTitle], references: [title])
+  movieTitleTitle String
+  start           DateTime
 
-  @@unique(fields: [cinemaSlug, movieId, start])
+  @@unique(fields: [cinemaSlug, movieTitleTitle, start])
 }
 
 model User {

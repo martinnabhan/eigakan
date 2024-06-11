@@ -8,19 +8,16 @@ import { validation } from '@eigakan/validation';
 import { useState } from 'react';
 
 const CinemaNames = () => {
-  const [cinemaSlug, setCinemaSlug] = useState('');
+  const [cinemaSlug, setCinemaSlug] = useState<string | null>(null);
   const [name, setName] = useState('');
 
   const { data: cinemas } = useQuery(client.admin.queries.cinemas);
 
-  const { props, validator } = useCRUD({
+  const { props } = useCRUD({
     input: { cinemaSlug, name },
     isEqual: ({ data, input }) => data.some(existing => input.cinemaSlug === existing.cinema?.slug && input.name === existing.name),
     mutations: client.admin.mutations.cinemaName,
-    onInsertClick: () => {
-      setCinemaSlug(cinemas && cinemas.length > 0 ? cinemas[0].slug : '');
-      setName('');
-    },
+    onDelete: () => name,
     onSuccess: utils => utils.admin.queries.cinemaNames.invalidate(),
     query: client.admin.queries.cinemaNames,
     validator: validation.cinemaName,
@@ -50,29 +47,22 @@ const CinemaNames = () => {
                   setName(cinemaName.name);
                 }}
               />
-              <DeleteButton disabled={false} label={cinemaName.name} />
+              <DeleteButton disabled={false} label={cinemaName.name} onClick={() => setName(cinemaName.name)} />
             </div>
           </>
         ))
       }
-      title="映画館の名前"
+      title="映画館名"
     >
-      <Input
-        autoFocus={!props.isUpdating}
-        label="名前"
-        loading={props.loading}
-        onChange={setName}
-        placeholder="グランドシネマサンシャイン 池袋"
-        validator={validator.shape.name}
-        value={name}
-      />
+      <Input disabled label="名前" value={name} />
 
       <Select
+        autoFocus
         label="映画館"
         loading={props.loading}
-        onChange={setCinemaSlug}
-        options={cinemas?.map(cinema => ({ label: cinema.name, value: cinema.slug }))}
-        value={cinemaSlug}
+        onChange={value => setCinemaSlug(value || null)}
+        options={[{ label: '未登録', value: '' }, ...(cinemas ? cinemas.map(cinema => ({ label: cinema.name, value: cinema.slug })) : [])]}
+        value={cinemaSlug || ''}
       />
     </CRUD>
   );

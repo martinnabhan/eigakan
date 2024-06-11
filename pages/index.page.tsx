@@ -4,6 +4,7 @@ import { MoviePosterLink } from '@eigakan/components/MoviePosterLink';
 import { Section } from '@eigakan/components/Section';
 import { prisma } from '@eigakan/db';
 import { cache } from '@eigakan/lib/cache';
+import { defaultArgs } from '@eigakan/lib/defaultArgs';
 import { Page } from '@eigakan/types/page';
 import { ArrowRightIcon } from '@heroicons/react/16/solid';
 import { FilmIcon, MapPinIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
@@ -12,86 +13,19 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 const getServerSideProps = cache(async () => {
-  const [areas, showtimes, cinemas, movies] = await Promise.all([
-    prisma.area.findMany({
-      where: {
-        cinemas: {
-          some: {
-            showtimes: {
-              some: {
-                start: {
-                  gte: new Date(),
-                },
-              },
-            },
-          },
-        },
-      },
-    }),
-    prisma.showtime.findMany({
-      select: {
-        cinema: {
-          select: {
-            areaSlug: true,
-          },
-        },
-      },
-      where: {
-        start: {
-          gte: new Date(),
-        },
-      },
-    }),
-    prisma.cinema.findMany({
-      orderBy: {
-        showtimes: {
-          _count: 'desc',
-        },
-      },
-      where: {
-        showtimes: {
-          some: {
-            start: {
-              gte: new Date(),
-            },
-          },
-        },
-      },
-    }),
-    prisma.movie.findMany({
-      orderBy: {
-        showtimes: {
-          _count: 'desc',
-        },
-      },
-      where: {
-        showtimes: {
-          some: {
-            start: {
-              gte: new Date(),
-            },
-          },
-        },
-      },
-    }),
+  const [areas, cinemas, movies] = await Promise.all([
+    prisma.area.findMany({ ...defaultArgs, select: { label: true, slug: true } }),
+    prisma.cinema.findMany({ ...defaultArgs, select: { area: { select: { label: true } }, name: true, slug: true } }),
+    prisma.movie.findMany({ ...defaultArgs, select: { id: true, poster: true, title: true } }),
   ]);
-
-  const areasWithCount = areas.map(area => ({ ...area, count: 0 }));
-
-  showtimes.forEach(({ cinema }) => {
-    const index = areasWithCount.findIndex(({ slug }) => slug === cinema.areaSlug);
-
-    areasWithCount[index].count += 1;
-  });
 
   return {
     props: {
-      areas: areasWithCount.sort((a, b) => (a.count > b.count ? -1 : 1)).map(({ count: _count, ...area }) => area),
+      areas,
       cinemas,
       movies,
     },
-    // TODO: tags
-    tags: new Set(['Movie']),
+    tags: new Set(['Area', 'Cinema', 'Movie']),
   };
 });
 
@@ -180,9 +114,9 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => {
           </Section>
 
           <Section Icon={VideoCameraIcon} title="人気映画館から探す">
-            {cinemas.map(({ name, slug }) => (
+            {cinemas.map(({ area, name, slug }) => (
               <Link className="line-clamp-1" href={{ pathname: '/cinema/[slug]', query: { slug } }} key={slug}>
-                {name}
+                {name}（{area.label}）
               </Link>
             ))}
           </Section>

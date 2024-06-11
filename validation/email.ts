@@ -1,5 +1,5 @@
-import { z } from 'zod';
+import { string } from '@eigakan/validation/string';
 
-const email = z.string().email();
+const email = string.email();
 
 export { email };

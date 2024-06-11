@@ -17,6 +17,7 @@ const useCRUD = <
   input,
   isEqual,
   mutations,
+  onDelete,
   onInsertClick,
   onSuccess,
   query,
@@ -28,7 +29,8 @@ const useCRUD = <
     delete: Mutation<Delete>;
     upsert: Mutation<Upsert>;
   };
-  onInsertClick: () => void;
+  onDelete: () => number | string;
+  onInsertClick?: () => void;
   onSuccess: (utils: ReturnType<typeof client.useUtils>) => unknown;
   query: Query<Data>;
   validator: Validator;
@@ -49,13 +51,15 @@ const useCRUD = <
       disabled: !data || Boolean(validator.safeParse(input).error) || isEqual({ data, input, isUpdating }),
       isUpdating,
       loading: deleteMutation.isPending || isPending || upsert.isPending,
-      onDelete: (labelToDelete: string) => deleteMutation.mutateAsync(labelToDelete),
-      onInsertClick: () => {
-        onInsertClick();
-        setIsUpdating(false);
-      },
+      onDelete: () => deleteMutation.mutateAsync(onDelete()),
       onUpdateClick: () => setIsUpdating(true),
       onUpsert: () => upsert.mutateAsync(input),
+      ...(onInsertClick && {
+        onInsertClick: () => {
+          onInsertClick();
+          setIsUpdating(false);
+        },
+      }),
     },
     validator,
   };

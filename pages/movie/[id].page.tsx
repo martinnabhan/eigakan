@@ -1,11 +1,14 @@
+import { Button } from '@eigakan/components/Button';
 import { PageLayout } from '@eigakan/components/PageLayout';
 import { prisma } from '@eigakan/db';
 import { cache } from '@eigakan/lib/cache';
+import { defaultArgs } from '@eigakan/lib/defaultArgs';
 import { filterShowtimes } from '@eigakan/lib/filterShowtimes';
 import { getDefaults } from '@eigakan/lib/getDefaults';
 import { getParams } from '@eigakan/lib/getParams';
 import { Page } from '@eigakan/types/page';
 import { validation } from '@eigakan/validation';
+import { MapPinIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
 import { CalendarDaysIcon } from '@heroicons/react/24/solid';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
@@ -23,17 +26,29 @@ const getServerSideProps = cache(async params => {
   }
 
   const movie = await prisma.movie.findUnique({
-    include: {
+    select: {
+      id: true,
+      poster: true,
       showtimes: {
-        include: {
-          cinema: {
-            include: {
-              area: true,
-            },
-          },
-        },
         orderBy: {
           start: 'asc',
+        },
+        select: {
+          area: {
+            select: {
+              label: true,
+            },
+          },
+          areaSlug: true,
+          cinema: {
+            select: {
+              name: true,
+            },
+          },
+          cinemaSlug: true,
+          end: true,
+          movieId: true,
+          start: true,
         },
         where: {
           start: {
@@ -41,6 +56,7 @@ const getServerSideProps = cache(async params => {
           },
         },
       },
+      title: true,
     },
     where: {
       id,
@@ -53,7 +69,10 @@ const getServerSideProps = cache(async params => {
     };
   }
 
-  const [areas, cinemas] = await Promise.all([prisma.area.findMany(), prisma.cinema.findMany()]);
+  const [areas, cinemas] = await Promise.all([
+    prisma.area.findMany({ ...defaultArgs, select: { label: true, slug: true } }),
+    prisma.cinema.findMany({ ...defaultArgs, select: { area: { select: { label: true } }, name: true, slug: true } }),
+  ]);
 
   return {
     props: {
@@ -61,7 +80,7 @@ const getServerSideProps = cache(async params => {
       cinemas,
       movie,
     },
-    tags: new Set(['Movie']),
+    tags: new Set(['Area', 'Cinema', 'Movie']),
   };
 });
 
@@ -89,10 +108,10 @@ const Movie: Page<typeof getServerSideProps> = ({ areas, cinemas, movie: { poste
     <PageLayout
       areas={areas}
       breadcrumbs={{
-        data: [{ item: '/search', name: '上映検索' }, { name: title }],
+        data: [{ item: '/movies', name: '映画検索' }, { name: title }],
         html: [
-          <Link href={{ pathname: '/search', query: router.query }} key="search">
-            上映検索
+          <Link href={{ pathname: '/movies', query: router.query }} key="movies">
+            映画検索
           </Link>,
           <p key="title">{title}</p>,
         ],
@@ -102,43 +121,58 @@ const Movie: Page<typeof getServerSideProps> = ({ areas, cinemas, movie: { poste
       title={title}
     >
       <div className="relative flex flex-col gap-5 lg:flex-row lg:items-start">
-        <div className="flex w-1/3 shrink-0 items-start gap-x-5 lg:sticky lg:top-48">
-          {poster && (
-            <Image
-              alt=""
-              className="shrink-0 rounded-xl border-2 border-white shadow"
-              height={300}
-              priority
-              src={`https://image.tmdb.org/t/p/w300${poster}`}
-              width={185}
-            />
-          )}
+        <div className="flex w-1/3 shrink-0 flex-col gap-y-5 lg:sticky lg:top-36">
+          <div className="flex items-start gap-x-5">
+            {poster && (
+              <Image
+                alt=""
+                className="shrink-0 rounded-xl border-2 border-white shadow"
+                height={300}
+                priority
+                src={`https://image.tmdb.org/t/p/w300${poster}`}
+                width={185}
+              />
+            )}
 
-          <div>
-            <div className="flex items-center gap-x-2">
-              <CalendarDaysIcon className="mt-0.5 size-4" />
-              <p>2024/02/13</p>
+            <div>
+              <div className="flex items-center gap-x-2">
+                <CalendarDaysIcon className="size-5" />
+                <p>2024/02/13</p>
+              </div>
             </div>
           </div>
+
+          <p>
+            テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
+          </p>
         </div>
 
-        <div className="flex flex-col gap-y-6 lg:w-3/4">
+        <div className="flex flex-col gap-y-6 lg:w-2/3">
           {Object.entries(days).map(([day, dayShowtimes]) => (
             <div key={day}>
-              <p className="mb-3 flex items-center gap-x-1">
-                <CalendarDaysIcon className="mt-0.5 size-5" />
+              <p className="mb-3 flex items-center gap-x-1 text-lg font-semibold">
+                <CalendarDaysIcon className="size-5" />
                 {day}
               </p>
 
-              <div className="grid grid-cols-3 gap-3 lg:grid-cols-4">
-                {dayShowtimes.map(({ end, start }) => (
-                  <a
-                    className="rounded bg-amber-500 px-1 py-2 text-center font-semibold shadow lg:hover:shadow-lg"
-                    href="/"
-                    key={day + start}
-                    target="_blank"
-                  >
-                    {format(start, 'HH:mm')}〜{format(end, 'HH:mm')}
+              <div className="grid gap-3 lg:grid-cols-3">
+                {dayShowtimes.map(({ area, cinema, end, start }) => (
+                  <a href="/" key={day + start} target="_blank">
+                    <Button className="flex !h-auto w-full flex-col py-2" disabled={false} loading={false}>
+                      <p className="text-lg font-semibold">
+                        {format(start, 'HH:mm')}〜{format(end, 'HH:mm')}
+                      </p>
+
+                      <p className="flex items-center gap-x-1">
+                        <VideoCameraIcon className="size-4" />
+                        {cinema.name}
+                      </p>
+
+                      <p className="flex items-center gap-x-1">
+                        <MapPinIcon className="size-4" />
+                        {area.label}
+                      </p>
+                    </Button>
                   </a>
                 ))}
               </div>

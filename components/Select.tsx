@@ -17,7 +17,7 @@ const Select: FunctionComponent<Props> = ({ autoFocus, className, label, loading
         autoFocus={autoFocus}
         className={clsx(
           className,
-          'appearance-none rounded-md bg-white p-3 text-sm text-zinc-700 shadow ring-1 ring-zinc-200 focus:text-zinc-700 focus:shadow-inner focus:outline-none focus:ring focus:ring-amber-500 lg:disabled:hover:cursor-not-allowed',
+          'appearance-none rounded-md bg-white p-3 text-sm text-zinc-700 shadow ring-1 ring-zinc-200 focus:text-zinc-700 focus:shadow-inner focus:outline-none focus:ring focus:ring-amber-500 disabled:bg-zinc-100 disabled:text-zinc-500 disabled:shadow-none lg:disabled:hover:cursor-not-allowed',
         )}
         disabled={loading}
         onChange={({ target }) => onChange(target.value)}

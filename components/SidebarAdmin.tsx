@@ -1,7 +1,8 @@
 import { Button } from '@eigakan/components/Button';
 import { SidebarAdminItem } from '@eigakan/components/SidebarAdminItem';
 import { client } from '@eigakan/trpc/client';
-import { FilmIcon, MapPinIcon, VideoCameraIcon, WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
+import { FilmIcon, MapPinIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { useState } from 'react';
@@ -23,9 +24,40 @@ const SidebarAdmin = () => {
       </Link>
 
       <div className="flex flex-col gap-y-2">
-        {/* TODO: prefetch */}
-        <SidebarAdminItem Icon={WrenchScrewdriverIcon} href="/admin" onMouseEnter={() => null}>
-          管理画面
+        <SidebarAdminItem Icon={MagnifyingGlassIcon} href="/admin/showtimes" onMouseEnter={() => utils.admin.queries.showtimes.prefetch()}>
+          上映
+        </SidebarAdminItem>
+
+        <SidebarAdminItem
+          Icon={FilmIcon}
+          href="/admin/movie-titles"
+          onMouseEnter={() => {
+            utils.admin.queries.movieTitles.prefetch();
+            utils.admin.queries.movies.prefetch();
+          }}
+        >
+          映画タイトル
+        </SidebarAdminItem>
+
+        <SidebarAdminItem
+          Icon={FilmIcon}
+          href="/admin/movies"
+          onMouseEnter={() => {
+            utils.admin.queries.movies.prefetch();
+          }}
+        >
+          映画
+        </SidebarAdminItem>
+
+        <SidebarAdminItem
+          Icon={VideoCameraIcon}
+          href="/admin/cinema-names"
+          onMouseEnter={() => {
+            utils.admin.queries.cinemaNames.prefetch();
+            utils.admin.queries.cinemas.prefetch();
+          }}
+        >
+          映画館名
         </SidebarAdminItem>
 
         <SidebarAdminItem
@@ -37,28 +69,6 @@ const SidebarAdmin = () => {
           }}
         >
           映画館
-        </SidebarAdminItem>
-
-        <SidebarAdminItem
-          Icon={VideoCameraIcon}
-          href="/admin/cinema-names"
-          onMouseEnter={() => {
-            utils.admin.queries.cinemaNames.prefetch();
-            utils.admin.queries.cinemas.prefetch();
-          }}
-        >
-          映画館の名前
-        </SidebarAdminItem>
-
-        <SidebarAdminItem
-          Icon={FilmIcon}
-          href="/admin/movie-titles"
-          onMouseEnter={() => {
-            utils.admin.queries.movieTitles.prefetch();
-            utils.admin.queries.movies.prefetch();
-          }}
-        >
-          映画のタイトル
         </SidebarAdminItem>
 
         <SidebarAdminItem Icon={MapPinIcon} href="/admin/areas" onMouseEnter={() => utils.admin.queries.areas.prefetch()}>

@@ -14,6 +14,7 @@ const Areas = () => {
     isEqual: ({ data, input, isUpdating }) =>
       data.some(existing => (isUpdating ? input.label === existing.label : input.label === existing.label || input.slug === existing.slug)),
     mutations: client.admin.mutations.area,
+    onDelete: () => label,
     onInsertClick: () => {
       setLabel('');
       setSlug('');
@@ -47,7 +48,7 @@ const Areas = () => {
                   setSlug(area.slug);
                 }}
               />
-              <DeleteButton disabled={area._count.cinemas > 0} label={area.label} />
+              <DeleteButton disabled={area._count.cinemas > 0} label={area.label} onClick={() => setLabel(area.label)} />
             </div>
           </>
         ))

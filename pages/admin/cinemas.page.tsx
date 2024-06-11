@@ -16,15 +16,18 @@ const Cinemas = () => {
 
   const { props, validator } = useCRUD({
     input: { areaSlug, name, slug },
-    isEqual: ({ data, input, isUpdating }) =>
-      data.some(existing => (isUpdating ? input.name === existing.name : input.name === existing.name || input.slug === existing.slug)),
+    isEqual: ({ data, input }) => data.some(existing => input.areaSlug === existing.area.slug && input.name === existing.name),
     mutations: client.admin.mutations.cinema,
+    onDelete: () => slug,
     onInsertClick: () => {
       setAreaSlug(areas && areas.length > 0 ? areas[0].slug : '');
       setName('');
       setSlug('');
     },
-    onSuccess: utils => utils.admin.queries.cinemas.invalidate(),
+    onSuccess: utils => {
+      utils.admin.queries.areas.invalidate();
+      utils.admin.queries.cinemas.invalidate();
+    },
     query: client.admin.queries.cinemas,
     validator: validation.cinema,
   });
@@ -57,7 +60,7 @@ const Cinemas = () => {
                   setSlug(cinema.slug);
                 }}
               />
-              <DeleteButton disabled={cinema._count.showtimes > 0} label={cinema.name} />
+              <DeleteButton disabled={cinema._count.showtimes > 0} label={cinema.name} onClick={() => setSlug(cinema.slug)} />
             </div>
           </>
         ))
@@ -69,7 +72,7 @@ const Cinemas = () => {
         label="名前"
         loading={props.loading}
         onChange={setName}
-        placeholder="グランドシネマサンシャイン池袋"
+        placeholder="グランドシネマサンシャイン"
         validator={validator.shape.name}
         value={name}
       />

@@ -2,6 +2,7 @@ import { MoviePosterLink } from '@eigakan/components/MoviePosterLink';
 import { PageLayout } from '@eigakan/components/PageLayout';
 import { prisma } from '@eigakan/db';
 import { cache } from '@eigakan/lib/cache';
+import { defaultArgs } from '@eigakan/lib/defaultArgs';
 import { filterShowtimes } from '@eigakan/lib/filterShowtimes';
 import { Page } from '@eigakan/types/page';
 
@@ -9,40 +10,20 @@ const title = '映画検索';
 
 const getServerSideProps = cache(async () => {
   const [areas, cinemas, movies] = await Promise.all([
-    prisma.area.findMany({
-      where: {
-        showtimes: {
-          some: {
-            start: {
-              gte: new Date(),
-            },
-          },
-        },
-      },
-    }),
-    prisma.cinema.findMany({
-      where: {
-        showtimes: {
-          some: {
-            start: {
-              gte: new Date(),
-            },
-          },
-        },
-      },
-    }),
+    prisma.area.findMany({ ...defaultArgs, select: { label: true, slug: true } }),
+    prisma.cinema.findMany({ ...defaultArgs, select: { area: { select: { label: true } }, name: true, slug: true } }),
     prisma.movie.findMany({
-      include: {
+      ...defaultArgs,
+      select: {
+        id: true,
+        poster: true,
         showtimes: {
-          include: {
-            cinema: {
-              include: {
-                area: true,
-              },
-            },
-          },
-          orderBy: {
-            start: 'asc',
+          select: {
+            areaSlug: true,
+            cinemaSlug: true,
+            end: true,
+            movieId: true,
+            start: true,
           },
           where: {
             start: {
@@ -50,20 +31,7 @@ const getServerSideProps = cache(async () => {
             },
           },
         },
-      },
-      orderBy: {
-        showtimes: {
-          _count: 'desc',
-        },
-      },
-      where: {
-        showtimes: {
-          some: {
-            start: {
-              gte: new Date(),
-            },
-          },
-        },
+        title: true,
       },
     }),
   ]);
@@ -74,8 +42,7 @@ const getServerSideProps = cache(async () => {
       cinemas,
       movies,
     },
-    // TODO: tags
-    tags: new Set(['Movie']),
+    tags: new Set(['Area', 'Cinema', 'Movie']),
   };
 });
 

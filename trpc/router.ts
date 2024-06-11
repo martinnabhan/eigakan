@@ -40,8 +40,8 @@ const router = t.router({
         }),
       },
       cinema: {
-        delete: adminProcedure.input(validation.cinema.shape.name).mutation(async ({ input: name }) => {
-          await prisma.cinema.delete({ where: { name } });
+        delete: adminProcedure.input(validation.cinema.shape.name).mutation(async ({ input: slug }) => {
+          await prisma.cinema.delete({ where: { slug } });
         }),
         upsert: adminProcedure.input(validation.cinema).mutation(async ({ input: { slug, ...update } }) => {
           await prisma.cinema.upsert({ create: { ...update, slug }, update, where: { slug } });
@@ -55,6 +55,14 @@ const router = t.router({
           await prisma.cinemaName.upsert({ create: { ...update, name }, update, where: { name } });
         }),
       },
+      movie: {
+        delete: adminProcedure.input(validation.movie.shape.id).mutation(async ({ input: id }) => {
+          await prisma.movie.delete({ where: { id } });
+        }),
+        upsert: adminProcedure.input(validation.movie).mutation(async ({ input: { id, ...update } }) => {
+          await prisma.movie.upsert({ create: { ...update, id }, update, where: { id } });
+        }),
+      },
       movieTitle: {
         delete: adminProcedure.input(validation.movieTitle.shape.title).mutation(async ({ input: title }) => {
           await prisma.movieTitle.delete({ where: { title } });
@@ -63,7 +71,7 @@ const router = t.router({
           await prisma.movieTitle.upsert({ create: { ...update, title }, update, where: { title } });
         }),
       },
-      purgeCache: adminProcedure.input(z.object({ tags: z.array(z.string().min(1)) })).mutation(async ({ input: { tags } }) => {
+      purgeCache: adminProcedure.input(z.object({ tags: z.array(validation.string) })).mutation(async ({ input: { tags } }) => {
         const token = process.env.PURGE_API_TOKEN;
 
         if (!token) {
@@ -151,8 +159,35 @@ const router = t.router({
       movies: adminProcedure.query(() =>
         prisma.movie.findMany({
           select: {
+            _count: {
+              select: {
+                titles: true,
+              },
+            },
             id: true,
+            poster: true,
             title: true,
+          },
+        }),
+      ),
+      showtimes: adminProcedure.query(() =>
+        prisma.showtime.findMany({
+          orderBy: {
+            start: 'asc',
+          },
+          select: {
+            cinema: {
+              select: {
+                name: true,
+              },
+            },
+            movie: {
+              select: {
+                poster: true,
+                title: true,
+              },
+            },
+            start: true,
           },
         }),
       ),

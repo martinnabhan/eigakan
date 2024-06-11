@@ -10,7 +10,7 @@ type Props<Record extends object> = {
   children: ReactNode;
   data: Record[] | undefined;
   rows: (args: {
-    DeleteButton: FunctionComponent<Pick<ComponentProps<typeof Button>, 'disabled'> & { label: string }>;
+    DeleteButton: FunctionComponent<Pick<ComponentProps<typeof Button>, 'disabled'> & { label: string; onClick: () => void }>;
     EditButton: FunctionComponent<{ onClick: () => void }>;
     data: Record[] | undefined;
   }) => ReactNode[] | undefined;
@@ -32,26 +32,39 @@ const CRUD = <Record extends object>({
   rows,
   title,
 }: Props<Record>) => {
-  const [dialog, setDialog] = useState<'delete' | 'upsert' | null>(null);
-  const [label, setLabel] = useState<string | undefined>(undefined);
-
-  const handleInsertClick = () => {
-    onInsertClick();
-    setDialog('upsert');
-  };
+  const [dialog, setDialog] = useState<{ label: string; variant: 'delete' } | { variant: 'upsert' } | null>(null);
 
   const openUpsertDialog = () => {
     onUpdateClick();
-    setDialog('upsert');
+    setDialog({ variant: 'upsert' });
   };
 
   return (
-    <PageLayoutAdmin buttonProps={{ loading: !data, onClick: handleInsertClick }} subtitle={`全ての${title}のテーブルです。`} title={title}>
+    <PageLayoutAdmin
+      title={title}
+      {...(onInsertClick && {
+        buttonProps: {
+          loading: !data,
+          onClick: () => {
+            onInsertClick();
+            setDialog({ variant: 'upsert' });
+          },
+        },
+      })}
+    >
       <Table
         columns={columns}
         rows={rows({
-          DeleteButton: props => (
-            <Button disabled={props.disabled} loading={false} onClick={() => setLabel(props.label)} variant="underline">
+          DeleteButton: ({ label, onClick, ...props }) => (
+            <Button
+              disabled={props.disabled}
+              loading={false}
+              onClick={() => {
+                onClick();
+                setDialog({ label, variant: 'delete' });
+              }}
+              variant="underline"
+            >
               削除
             </Button>
           ),
@@ -72,7 +85,9 @@ const CRUD = <Record extends object>({
         })}
       />
 
-      {dialog === 'upsert' && (
+      {dialog?.variant === 'delete' && <DeleteDialog label={dialog.label} onClose={() => setDialog(null)} onDelete={onDelete} />}
+
+      {dialog?.variant === 'upsert' && (
         <UpsertDialog
           disabled={disabled}
           loading={loading}
@@ -83,8 +98,6 @@ const CRUD = <Record extends object>({
           {children}
         </UpsertDialog>
       )}
-
-      {label && <DeleteDialog label={label} onClose={() => setLabel(undefined)} onDelete={onDelete} />}
     </PageLayoutAdmin>
   );
 };

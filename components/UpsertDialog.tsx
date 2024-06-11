@@ -12,7 +12,7 @@ type Props = Required<Pick<ComponentProps<typeof Dialog>, 'onClose'>> & {
 const UpsertDialog: FunctionComponent<Props> = ({ children, disabled, loading, onClick, onClose, variant }) => (
   <Dialog
     buttonProps={{
-      children: variant === 'insert' ? '追加する' : '編集する',
+      children: variant === 'insert' ? '追加する' : '保存する',
       disabled,
       loading,
       onClick: async () => {

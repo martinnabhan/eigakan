@@ -34,7 +34,7 @@ const PageLayout: FunctionComponent<Props> = ({ areas, breadcrumbs, children, ci
         <Breadcrumbs data={breadcrumbs.data}>{breadcrumbs.html}</Breadcrumbs>
         <Sidebar areas={areas} cinemas={cinemas} movies={movies} />
 
-        <h1 className="container my-6 text-lg font-bold lg:my-12 lg:text-4xl">{title}</h1>
+        <h1 className="container my-6 text-xl font-bold lg:my-12 lg:text-4xl">{title}</h1>
 
         <div className="container mb-12 flex flex-col gap-y-8">
           {typeof children === 'function' ? children({ defaults, params, query: router.query }) : children}
