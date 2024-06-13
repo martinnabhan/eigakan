@@ -1,16 +1,15 @@
-import { FilmIcon, MapPinIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import clsx from 'clsx';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+// import { FilmIcon, MapPinIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
+// import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
+// import clsx from 'clsx';
+// import Link from 'next/link';
+// import { useRouter } from 'next/router';
 
-const Footer = () => {
-  const router = useRouter();
+const Footer = () => (
+  // const router = useRouter();
 
-  return (
-    <>
-      <div className="sticky bottom-0 border-t-2 border-white bg-red-700">
-        <div className="container flex w-full justify-around pb-8 pt-4 lg:pb-4">
+  <>
+    <div className="sticky bottom-0 border-t-2 border-white bg-red-700">
+      {/*<div className="container flex w-full justify-around pb-8 pt-4 lg:pb-4">
           <Link className="w-1/4" href="/showtimes">
             <button
               className={clsx(
@@ -59,15 +58,15 @@ const Footer = () => {
             </button>
           </Link>
         </div>
-      </div>
+        */}
+    </div>
 
-      <footer>
-        <div className="container py-16 text-center text-xs text-white/70">
-          <p>&copy; {new Date().getFullYear()} 映画館ドットコム</p>
-        </div>
-      </footer>
-    </>
-  );
-};
+    <footer>
+      <div className="container py-16 text-center text-xs text-white/70">
+        <p>&copy; {new Date().getFullYear()} 映画館ガイド</p>
+      </div>
+    </footer>
+  </>
+);
 
 export { Footer };

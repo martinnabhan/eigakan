@@ -3,14 +3,13 @@ import { HomeIcon } from '@heroicons/react/24/solid';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FunctionComponent, ReactNode } from 'react';
+import { FunctionComponent } from 'react';
 
 interface Props {
-  children: ReactNode;
-  data: { item?: string; name: string }[];
+  breadcrumbs: { href?: string; label: string }[];
 }
 
-const Breadcrumbs: FunctionComponent<Props> = ({ children, data }) => {
+const Breadcrumbs: FunctionComponent<Props> = ({ breadcrumbs }) => {
   const router = useRouter();
 
   return (
@@ -20,11 +19,11 @@ const Breadcrumbs: FunctionComponent<Props> = ({ children, data }) => {
           {JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'BreadcrumbList',
-            itemListElement: data.map(({ item, name }, index) => ({
+            itemListElement: breadcrumbs.map(({ href, label }, index) => ({
               '@type': 'ListItem',
               // TODO: domain
-              item: item || router.asPath.split('?')[0],
-              name,
+              item: href || router.asPath.split('?')[0],
+              name: label,
               position: index + 1,
             })),
           })}
@@ -36,19 +35,12 @@ const Breadcrumbs: FunctionComponent<Props> = ({ children, data }) => {
           <HomeIcon className="size-5" />
         </Link>
 
-        {Array.isArray(children) ? (
-          children.map(child => (
-            <>
-              <ChevronRightIcon className="size-4 shrink-0" />
-              {child}
-            </>
-          ))
-        ) : (
+        {breadcrumbs.map(({ href, label }) => (
           <>
             <ChevronRightIcon className="size-4 shrink-0" />
-            {children}
+            {href ? <Link href={href}>{label}</Link> : <p>{label}</p>}
           </>
-        )}
+        ))}
       </div>
     </>
   );

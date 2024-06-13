@@ -20,7 +20,7 @@ const SidebarAdmin = () => {
   return (
     <div className="sticky top-0 flex max-h-screen w-72 shrink-0 flex-col gap-y-5 bg-red-700 px-6 pb-4">
       <Link className="flex h-16 items-center" href="/">
-        映画館.com
+        映画館ガイド
       </Link>
 
       <div className="flex flex-col gap-y-2">

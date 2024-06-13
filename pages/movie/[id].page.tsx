@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 const getServerSideProps = cache(async params => {
-  const id = validation.movieTitle.shape.movieId.safeParse(params?.id).data;
+  const id = validation.movie.shape.id.safeParse(Number(params?.id)).data;
 
   if (!id) {
     return {
@@ -90,7 +90,7 @@ const Movie: Page<typeof getServerSideProps> = ({ areas, cinemas, movie: { poste
   const defaults = getDefaults();
   const params = getParams(router.query);
   const showtimes = filterShowtimes({ defaults, params, showtimes: movie.showtimes });
-  const title = `${movie.title}の上映時間`;
+  const title = `${movie.title}の上映一覧`;
 
   const days: { [key: string]: typeof showtimes } = {};
 

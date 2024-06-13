@@ -13,7 +13,7 @@ const SidebarSection: FunctionComponent<Props> = ({ Icon, children, title }) => 
       <Icon className="mt-0.5 size-4 text-amber-500" />
       {title}
     </h2>
-    <div className="flex flex-col gap-y-2 text-gray-600">{children}</div>
+    <div className="flex flex-col gap-y-2 text-white/70">{children}</div>
   </div>
 );
 

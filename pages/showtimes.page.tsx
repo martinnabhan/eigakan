@@ -6,12 +6,29 @@ import { defaultArgs } from '@eigakan/lib/defaultArgs';
 import { filterShowtimes } from '@eigakan/lib/filterShowtimes';
 import { Page } from '@eigakan/types/page';
 
-const title = '映画検索';
+const title = '上映検索';
 
 const getServerSideProps = cache(async () => {
   const [areas, cinemas, movies] = await Promise.all([
-    prisma.area.findMany({ ...defaultArgs, select: { label: true, slug: true } }),
-    prisma.cinema.findMany({ ...defaultArgs, select: { area: { select: { label: true } }, name: true, slug: true } }),
+    prisma.area.findMany({
+      ...defaultArgs,
+      select: {
+        label: true,
+        slug: true,
+      },
+    }),
+    prisma.cinema.findMany({
+      ...defaultArgs,
+      select: {
+        area: {
+          select: {
+            label: true,
+          },
+        },
+        name: true,
+        slug: true,
+      },
+    }),
     prisma.movie.findMany({
       ...defaultArgs,
       select: {
@@ -46,8 +63,8 @@ const getServerSideProps = cache(async () => {
   };
 });
 
-const Movies: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
-  <PageLayout areas={areas} breadcrumbs={{ data: [{ name: title }], html: <p>{title}</p> }} cinemas={cinemas} movies={[]} title={title}>
+const Showtimes: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
+  <PageLayout areas={areas} breadcrumbs={[{ label: title }]} cinemas={cinemas} movies={[]} title={title}>
     {({ defaults, params }) => (
       <div className="grid grid-cols-3 gap-5 lg:grid-cols-7">
         {movies
@@ -62,4 +79,4 @@ const Movies: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => 
 
 export { getServerSideProps };
 
-export default Movies;
+export default Showtimes;

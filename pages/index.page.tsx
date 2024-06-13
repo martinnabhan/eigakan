@@ -14,9 +14,33 @@ import { useState } from 'react';
 
 const getServerSideProps = cache(async () => {
   const [areas, cinemas, movies] = await Promise.all([
-    prisma.area.findMany({ ...defaultArgs, select: { label: true, slug: true } }),
-    prisma.cinema.findMany({ ...defaultArgs, select: { area: { select: { label: true } }, name: true, slug: true } }),
-    prisma.movie.findMany({ ...defaultArgs, select: { id: true, poster: true, title: true } }),
+    prisma.area.findMany({
+      ...defaultArgs,
+      select: {
+        label: true,
+        slug: true,
+      },
+    }),
+    prisma.cinema.findMany({
+      ...defaultArgs,
+      select: {
+        area: {
+          select: {
+            label: true,
+          },
+        },
+        name: true,
+        slug: true,
+      },
+    }),
+    prisma.movie.findMany({
+      ...defaultArgs,
+      select: {
+        id: true,
+        poster: true,
+        title: true,
+      },
+    }),
   ]);
 
   return {
@@ -37,7 +61,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => {
       <div className="container flex flex-col">
         <div className="mb-32 grid gap-y-14 lg:mb-36 lg:min-h-[calc(100vh-80px)] lg:grid-cols-2 lg:gap-x-10">
           <div className="flex flex-col items-start justify-center">
-            <p className="mb-24 lg:mb-2">映画館.com</p>
+            <p className="mb-24 lg:mb-2">映画館ガイド</p>
 
             <h1 className="mb-6 text-4xl font-bold leading-tight lg:text-6xl">
               人気映画の上映を
@@ -46,7 +70,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => {
             </h1>
 
             <p className="mb-10 font-light leading-loose text-white/70 lg:text-lg">
-              映画館ドットコムは人気映画の上映をエリア、映画、映画館、
+              映画館ガイドは人気映画の上映をエリア、映画館、
               <br className="hidden lg:block" />
               日付と時間で簡単に検索できるサイトです。
             </p>
@@ -88,18 +112,32 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => {
           id="search"
           text={
             <>
-              映画館ドットコムは他のサイトより簡単に好きな条件で上映時間を検索できます。
+              映画館ガイドは他のサイトより簡単に好きな条件で上映を探せます。
               <br />
-              あなたは何で検索しますか？
+              あなたは何で探しますか？
             </>
           }
-          title="エリア、映画、映画館で簡単に検索"
+          title="上映、エリア、映画、映画館で簡単に検索"
         />
 
-        <div className="grid w-full gap-x-5 gap-y-16 lg:grid-cols-3 lg:gap-y-0">
+        <div className="grid w-full gap-x-5 gap-y-16 lg:grid-cols-4 lg:gap-y-0 lg:divide-x lg:divide-white">
+          <Section Icon={MagnifyingGlassIcon} title="上映時間から探す">
+            <Link className="line-clamp-1" href={{ pathname: '/showtimes/[params]', query: { params: [] } }}>
+              今日
+            </Link>
+
+            <Link className="line-clamp-1" href={{ pathname: '/showtimes/[params]', query: { params: [] } }}>
+              明日
+            </Link>
+
+            <Link className="line-clamp-1" href={{ pathname: '/showtimes/[params]', query: { params: [] } }}>
+              今週
+            </Link>
+          </Section>
+
           <Section Icon={MapPinIcon} title="人気エリアから探す">
             {areas.map(({ label, slug }) => (
-              <Link className="line-clamp-1" href={{ pathname: '/area/[slug]', query: { slug } }} key={slug}>
+              <Link className="line-clamp-1" href={{ pathname: '/showtimes', query: { area: slug } }} key={slug}>
                 {label}
               </Link>
             ))}
@@ -115,7 +153,7 @@ const Index: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => {
 
           <Section Icon={VideoCameraIcon} title="人気映画館から探す">
             {cinemas.map(({ area, name, slug }) => (
-              <Link className="line-clamp-1" href={{ pathname: '/cinema/[slug]', query: { slug } }} key={slug}>
+              <Link className="line-clamp-1" href={{ pathname: '/showtimes', query: { cinema: slug } }} key={slug}>
                 {name}（{area.label}）
               </Link>
             ))}

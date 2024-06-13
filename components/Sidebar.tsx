@@ -21,7 +21,7 @@ const Sidebar: FunctionComponent<Props> = ({ areas, cinemas, movies }) => {
   const params = getParams(router.query);
 
   return (
-    <div className="sticky top-0 z-10 border-b-2 border-white bg-red-700 shadow">
+    <div className="sticky top-0 z-10 border-b-2 border-white bg-red-700 shadow-[0_1px_3px_-3px_rgb(0_0_0/0.1),0_1px_2px_-2px_rgb(0_0_0/0.1)]">
       <div className="container flex gap-x-10 overflow-x-scroll py-4 lg:grid lg:grid-cols-4">
         {areas.length > 0 && (
           <SidebarSection Icon={MapPinIcon} title="エリア">
@@ -97,90 +97,96 @@ const Sidebar: FunctionComponent<Props> = ({ areas, cinemas, movies }) => {
         )}
 
         <SidebarSection Icon={CalendarDaysIcon} title="日付">
-          <input
-            className="appearance-none bg-red-700 text-white/70"
-            max={params.dateEnd || defaults.dateEnd}
-            min={defaults.dateStart}
-            onChange={({ target }) => {
-              if (target.value === defaults.dateStart) {
-                delete params.dateStart;
-                router.replace({ pathname: router.pathname, query: { ...params, ...router.query } }, undefined, {
-                  scroll: false,
-                  shallow: true,
-                });
-              } else {
-                router.replace({ pathname: router.pathname, query: { ...params, ...router.query, dateStart: target.value } }, undefined, {
-                  scroll: false,
-                  shallow: true,
-                });
-              }
-            }}
-            type="date"
-            value={params.dateStart || defaults.dateStart}
-          />
-          <input
-            className="appearance-none bg-red-700 text-white/70"
-            min={params.dateStart || defaults.dateStart}
-            onChange={({ target }) => {
-              if (target.value === defaults.dateEnd) {
-                delete params.dateEnd;
-                router.replace({ pathname: router.pathname, query: { ...params, ...router.query } }, undefined, {
-                  scroll: false,
-                  shallow: true,
-                });
-              } else {
-                router.replace({ pathname: router.pathname, query: { ...params, ...router.query, dateEnd: target.value } }, undefined, {
-                  scroll: false,
-                  shallow: true,
-                });
-              }
-            }}
-            type="date"
-            value={params.dateEnd || defaults.dateEnd}
-          />
+          <div className="mr-auto flex flex-col items-center lg:flex-row">
+            <input
+              className="appearance-none bg-red-700"
+              max={params.dateEnd || defaults.dateEnd}
+              min={defaults.dateStart}
+              onChange={({ target }) => {
+                if (target.value === defaults.dateStart) {
+                  delete params.dateStart;
+                  router.replace({ pathname: router.pathname, query: { ...params, ...router.query } }, undefined, {
+                    scroll: false,
+                    shallow: true,
+                  });
+                } else {
+                  router.replace({ pathname: router.pathname, query: { ...params, ...router.query, dateStart: target.value } }, undefined, {
+                    scroll: false,
+                    shallow: true,
+                  });
+                }
+              }}
+              type="date"
+              value={params.dateStart || defaults.dateStart}
+            />
+            〜
+            <input
+              className="appearance-none bg-red-700"
+              min={params.dateStart || defaults.dateStart}
+              onChange={({ target }) => {
+                if (target.value === defaults.dateEnd) {
+                  delete params.dateEnd;
+                  router.replace({ pathname: router.pathname, query: { ...params, ...router.query } }, undefined, {
+                    scroll: false,
+                    shallow: true,
+                  });
+                } else {
+                  router.replace({ pathname: router.pathname, query: { ...params, ...router.query, dateEnd: target.value } }, undefined, {
+                    scroll: false,
+                    shallow: true,
+                  });
+                }
+              }}
+              type="date"
+              value={params.dateEnd || defaults.dateEnd}
+            />
+          </div>
         </SidebarSection>
 
         <SidebarSection Icon={ClockIcon} title="時間">
-          <input
-            className="mr-auto appearance-none whitespace-nowrap bg-red-700 text-white/70"
-            max={params.timeEnd || defaults.timeEnd}
-            onChange={({ target }) => {
-              if (target.value === defaults.timeStart) {
-                delete params.timeStart;
-                router.replace({ pathname: router.pathname, query: { ...params, ...router.query } }, undefined, {
-                  scroll: false,
-                  shallow: true,
-                });
-              } else {
-                router.replace({ pathname: router.pathname, query: { ...params, ...router.query, timeStart: target.value } }, undefined, {
-                  scroll: false,
-                  shallow: true,
-                });
-              }
-            }}
-            type="time"
-            value={params.timeStart || defaults.timeStart}
-          />
-          <input
-            className="appearance-none whitespace-nowrap bg-red-700 text-white/70"
-            min={params.timeStart || defaults.timeStart}
-            onChange={({ target }) => {
-              if (target.value === defaults.timeEnd) {
-                delete params.timeEnd;
-                router.replace({ pathname: router.pathname, query: { ...params, ...router.query } }, undefined, {
-                  scroll: false,
-                  shallow: true,
-                });
-              } else {
-                router.replace({ pathname: router.pathname, query: { ...params, ...router.query, timeEnd: target.value } }, undefined, {
-                  scroll: false,
-                  shallow: true,
-                });
-              }
-            }}
-            type="time"
-            value={params.timeEnd || defaults.timeEnd}
-          />
+          <div className="mr-auto flex flex-col items-center lg:flex-row">
+            <input
+              className="mr-auto appearance-none whitespace-nowrap bg-red-700"
+              max={params.timeEnd || defaults.timeEnd}
+              onChange={({ target }) => {
+                if (target.value === defaults.timeStart) {
+                  delete params.timeStart;
+                  router.replace({ pathname: router.pathname, query: { ...params, ...router.query } }, undefined, {
+                    scroll: false,
+                    shallow: true,
+                  });
+                } else {
+                  router.replace({ pathname: router.pathname, query: { ...params, ...router.query, timeStart: target.value } }, undefined, {
+                    scroll: false,
+                    shallow: true,
+                  });
+                }
+              }}
+              type="time"
+              value={params.timeStart || defaults.timeStart}
+            />
+            〜
+            <input
+              className="appearance-none whitespace-nowrap bg-red-700"
+              min={params.timeStart || defaults.timeStart}
+              onChange={({ target }) => {
+                if (target.value === defaults.timeEnd) {
+                  delete params.timeEnd;
+                  router.replace({ pathname: router.pathname, query: { ...params, ...router.query } }, undefined, {
+                    scroll: false,
+                    shallow: true,
+                  });
+                } else {
+                  router.replace({ pathname: router.pathname, query: { ...params, ...router.query, timeEnd: target.value } }, undefined, {
+                    scroll: false,
+                    shallow: true,
+                  });
+                }
+              }}
+              type="time"
+              value={params.timeEnd || defaults.timeEnd}
+            />
+          </div>
         </SidebarSection>
       </div>
     </div>

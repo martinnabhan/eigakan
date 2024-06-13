@@ -6,11 +6,9 @@ import { getParams } from '@eigakan/lib/getParams';
 import { useRouter } from 'next/router';
 import { ComponentProps, FunctionComponent, ReactNode } from 'react';
 
-type Props = ComponentProps<typeof SEO> &
+type Props = ComponentProps<typeof Breadcrumbs> &
+  ComponentProps<typeof SEO> &
   ComponentProps<typeof Sidebar> & {
-    breadcrumbs: Pick<ComponentProps<typeof Breadcrumbs>, 'data'> & {
-      html: ComponentProps<typeof Breadcrumbs>['children'];
-    };
     children:
       | ReactNode
       | ((args: {
@@ -31,7 +29,7 @@ const PageLayout: FunctionComponent<Props> = ({ areas, breadcrumbs, children, ci
       <SEO title={title} />
 
       <div className="flex flex-col pt-6">
-        <Breadcrumbs data={breadcrumbs.data}>{breadcrumbs.html}</Breadcrumbs>
+        <Breadcrumbs breadcrumbs={breadcrumbs} />
         <Sidebar areas={areas} cinemas={cinemas} movies={movies} />
 
         <h1 className="container my-6 text-xl font-bold lg:my-12 lg:text-4xl">{title}</h1>

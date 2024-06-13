@@ -11,8 +11,8 @@ const Section: FunctionComponent<Props> = ({ Icon, children, title }) => {
   const [showMore, setShowMore] = useState(false);
 
   return (
-    <div className="flex flex-col items-start">
-      <div className="mb-6 flex size-10 items-center justify-center rounded-lg bg-amber-500">
+    <div className="flex flex-col items-start lg:p-5">
+      <div className="mb-3 flex size-10 items-center justify-center rounded-lg bg-amber-500 lg:mb-6">
         <Icon className="size-6" />
       </div>
 
