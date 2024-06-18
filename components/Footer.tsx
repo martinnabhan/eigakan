@@ -8,7 +8,7 @@ const Footer = () => (
   // const router = useRouter();
 
   <>
-    <div className="sticky bottom-0 border-t-2 border-white bg-red-700">
+    <div className="border-t-2 border-white bg-red-700">
       {/*<div className="container flex w-full justify-around pb-8 pt-4 lg:pb-4">
           <Link className="w-1/4" href="/showtimes">
             <button

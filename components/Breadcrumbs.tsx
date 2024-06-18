@@ -30,15 +30,21 @@ const Breadcrumbs: FunctionComponent<Props> = ({ breadcrumbs }) => {
         </script>
       </Head>
 
-      <div className="container flex items-center gap-x-5 overflow-x-scroll whitespace-nowrap pb-2">
+      <div className="flex items-center gap-x-5 overflow-x-scroll whitespace-nowrap px-5 pb-3">
         <Link href="/">
           <HomeIcon className="size-5" />
         </Link>
 
         {breadcrumbs.map(({ href, label }) => (
           <>
-            <ChevronRightIcon className="size-4 shrink-0" />
-            {href ? <Link href={href}>{label}</Link> : <p>{label}</p>}
+            <ChevronRightIcon className="size-4 shrink-0" key={`${href}-1`} />
+            {href ? (
+              <Link href={href} key={`${href}-2`}>
+                {label}
+              </Link>
+            ) : (
+              <p key={`${href}-2`}>{label}</p>
+            )}
           </>
         ))}
       </div>

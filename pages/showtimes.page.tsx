@@ -44,7 +44,7 @@ const getServerSideProps = cache(async () => {
           },
           where: {
             start: {
-              gte: new Date(),
+              gt: new Date(),
             },
           },
         },
@@ -66,7 +66,7 @@ const getServerSideProps = cache(async () => {
 const Showtimes: Page<typeof getServerSideProps> = ({ areas, cinemas, movies }) => (
   <PageLayout areas={areas} breadcrumbs={[{ label: title }]} cinemas={cinemas} movies={[]} title={title}>
     {({ defaults, params }) => (
-      <div className="grid grid-cols-3 gap-5 lg:grid-cols-7">
+      <div className="grid grid-cols-3 gap-3 lg:grid-cols-5 lg:gap-5">
         {movies
           .filter(({ showtimes }) => filterShowtimes({ defaults, params, showtimes }).length > 0)
           .map(movie => (

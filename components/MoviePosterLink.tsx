@@ -17,7 +17,7 @@ const MoviePosterLink: FunctionComponent<Props> = ({ id, poster, priority, title
     >
       <Image
         alt={title}
-        className="h-full rounded-xl border-2 border-white object-cover"
+        className="size-full rounded-xl border-2 border-white object-cover"
         height={225}
         priority={priority}
         src={`https://image.tmdb.org/t/p/w300${poster}`}

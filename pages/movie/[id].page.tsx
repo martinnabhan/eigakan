@@ -13,7 +13,6 @@ import { CalendarDaysIcon } from '@heroicons/react/24/solid';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 const getServerSideProps = cache(async params => {
@@ -52,7 +51,7 @@ const getServerSideProps = cache(async params => {
         },
         where: {
           start: {
-            gte: new Date(),
+            gt: new Date(),
           },
         },
       },
@@ -60,6 +59,13 @@ const getServerSideProps = cache(async params => {
     },
     where: {
       id,
+      showtimes: {
+        some: {
+          start: {
+            gt: new Date(),
+          },
+        },
+      },
     },
   });
 
@@ -107,47 +113,22 @@ const Movie: Page<typeof getServerSideProps> = ({ areas, cinemas, movie: { poste
   return (
     <PageLayout
       areas={areas}
-      breadcrumbs={{
-        data: [{ item: '/movies', name: '映画検索' }, { name: title }],
-        html: [
-          <Link href={{ pathname: '/movies', query: router.query }} key="movies">
-            映画検索
-          </Link>,
-          <p key="title">{title}</p>,
-        ],
-      }}
+      breadcrumbs={[{ href: '/showtimes', label: '上映検索' }, { label: title }]}
       cinemas={cinemas}
       movies={[]}
       title={title}
     >
-      <div className="relative flex flex-col gap-5 lg:flex-row lg:items-start">
-        <div className="flex w-1/3 shrink-0 flex-col gap-y-5 lg:sticky lg:top-36">
-          <div className="flex items-start gap-x-5">
-            {poster && (
-              <Image
-                alt=""
-                className="shrink-0 rounded-xl border-2 border-white shadow"
-                height={300}
-                priority
-                src={`https://image.tmdb.org/t/p/w300${poster}`}
-                width={185}
-              />
-            )}
+      <div className="relative flex flex-col gap-8">
+        <Image
+          alt=""
+          className="rounded-xl border-2 border-white shadow"
+          height={300}
+          priority
+          src={`https://image.tmdb.org/t/p/w300${poster}`}
+          width={185}
+        />
 
-            <div>
-              <div className="flex items-center gap-x-2">
-                <CalendarDaysIcon className="size-5" />
-                <p>2024/02/13</p>
-              </div>
-            </div>
-          </div>
-
-          <p>
-            テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-y-6 lg:w-2/3">
+        <div className="flex flex-col gap-y-6">
           {Object.entries(days).map(([day, dayShowtimes]) => (
             <div key={day}>
               <p className="mb-3 flex items-center gap-x-1 text-lg font-semibold">
@@ -155,21 +136,21 @@ const Movie: Page<typeof getServerSideProps> = ({ areas, cinemas, movie: { poste
                 {day}
               </p>
 
-              <div className="grid gap-3 lg:grid-cols-3">
+              <div className="grid gap-3 lg:grid-cols-4">
                 {dayShowtimes.map(({ area, cinema, end, start }) => (
                   <a href="/" key={day + start} target="_blank">
-                    <Button className="flex !h-auto w-full flex-col py-2" disabled={false} loading={false}>
-                      <p className="text-lg font-semibold">
+                    <Button className="flex !h-auto w-full flex-col py-3" disabled={false} loading={false}>
+                      <p className="mb-2 text-xl font-semibold">
                         {format(start, 'HH:mm')}〜{format(end, 'HH:mm')}
                       </p>
 
-                      <p className="flex items-center gap-x-1">
+                      <p className="mr-auto flex items-center gap-x-1 font-normal text-white/70">
                         <VideoCameraIcon className="size-4" />
-                        {cinema.name}
+                        <span className="line-clamp-1">{cinema.name}</span>
                       </p>
 
-                      <p className="flex items-center gap-x-1">
-                        <MapPinIcon className="size-4" />
+                      <p className="mr-auto flex items-center gap-x-1 font-normal text-white/70">
+                        <MapPinIcon className="-ml-px size-4" />
                         {area.label}
                       </p>
                     </Button>

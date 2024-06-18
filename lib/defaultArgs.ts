@@ -8,7 +8,7 @@ const defaultArgs = {
     showtimes: {
       some: {
         start: {
-          gte: new Date(),
+          gt: new Date(),
         },
       },
     },
