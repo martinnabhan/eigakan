@@ -32,7 +32,7 @@ const main = async () => {
         `https://hlo.tohotheater.jp/net/schedule/${slug}/TNPI3050J02.do?__type__=html&__useResultInfo__=no&vg_cd=${slug}&show_day=${date}`,
       );
 
-      console.log(await dateResponse.json());
+      console.info(await dateResponse.json());
     }
   }
 

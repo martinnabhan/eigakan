@@ -23,7 +23,8 @@ const handlers: Record<
   dateEnd: ({ defaults, params, showtime }) => showtime.end < endOfDay(parse(params.dateEnd || defaults.dateEnd, 'yyyy-MM-dd', new Date())),
   dateStart: ({ defaults, params, showtime }) =>
     showtime.start > startOfDay(parse(params.dateStart || defaults.dateStart, 'yyyy-MM-dd', new Date())),
-  movie: ({ params, showtime }) => Boolean(showtime.movieId && (params.movie.length === 0 || params.movie.includes(showtime.movieId))),
+  movie: ({ params, showtime }) =>
+    Boolean(showtime.movieId && (params.movie.length === 0 || params.movie.includes(showtime.movieId.toString()))),
   timeEnd: ({ defaults, params, showtime }) => {
     const [hours, minutes] = (params.timeEnd || defaults.timeEnd).split(':');
 
