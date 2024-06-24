@@ -68,7 +68,10 @@ const router = t.router({
           await prisma.movieTitle.delete({ where: { title } });
         }),
         upsert: adminProcedure.input(validation.movieTitle).mutation(async ({ input: { title, ...update } }) => {
-          await prisma.movieTitle.upsert({ create: { ...update, title }, update, where: { title } });
+          await Promise.all([
+            prisma.movieTitle.upsert({ create: { ...update, title }, update, where: { title } }),
+            prisma.showtime.updateMany({ data: { movieId: { set: update.movieId } }, where: { movieTitleTitle: title } }),
+          ]);
         }),
       },
       purgeCache: adminProcedure.input(z.object({ tags: z.array(validation.string) })).mutation(async ({ input: { tags } }) => {
@@ -143,7 +146,7 @@ const router = t.router({
       movieTitles: adminProcedure.query(() =>
         prisma.movieTitle.findMany({
           orderBy: {
-            createdAt: 'desc',
+            title: 'asc',
           },
           select: {
             movie: {

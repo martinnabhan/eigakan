@@ -10,7 +10,7 @@ import { Page } from '@eigakan/types/page';
 import { validation } from '@eigakan/validation';
 import { MapPinIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
 import { CalendarDaysIcon } from '@heroicons/react/24/solid';
-import { format } from 'date-fns';
+import { format, isAfter, isBefore } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -46,8 +46,10 @@ const getServerSideProps = cache(async params => {
           },
           cinemaSlug: true,
           end: true,
+          id: true,
           movieId: true,
           start: true,
+          valid: true,
         },
         where: {
           start: {
@@ -137,9 +139,18 @@ const Movie: Page<typeof getServerSideProps> = ({ areas, cinemas, movie: { poste
               </p>
 
               <div className="grid gap-3 lg:grid-cols-4">
-                {dayShowtimes.map(({ area, cinema, end, start }) => (
-                  <a href="/" key={day + start} target="_blank">
-                    <Button className="flex !h-auto w-full flex-col py-3" disabled={false} loading={false}>
+                {dayShowtimes.map(({ area, cinema, end, id, start, valid }) => (
+                  // TODO: use cinema
+                  <a
+                    href={`https://transaction.ticket-cinemasunshine.com/projects/sskts-production/purchase/transaction/${id}`}
+                    key={day + start}
+                    target="_blank"
+                  >
+                    <Button
+                      className="flex !h-auto w-full flex-col py-3"
+                      disabled={!isAfter(new Date(), valid) || !isBefore(new Date(), end)}
+                      loading={false}
+                    >
                       <p className="mb-2 text-xl font-semibold">
                         {format(start, 'HH:mm')}〜{format(end, 'HH:mm')}
                       </p>

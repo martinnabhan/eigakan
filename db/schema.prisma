@@ -62,24 +62,26 @@ model MovieTitle {
 }
 
 model Showtime {
-  id              String     @id @default(uuid())
   area            Area       @relation(fields: [areaSlug], references: [slug])
   areaSlug        String
   cinema          Cinema     @relation(fields: [cinemaSlug], references: [slug])
   cinemaSlug      String
   end             DateTime
-  movie           Movie      @relation(fields: [movieId], references: [id])
-  movieId         Int
+  id              String     @id
+  movie           Movie?     @relation(fields: [movieId], references: [id])
+  movieId         Int?
   movieTitle      MovieTitle @relation(fields: [movieTitleTitle], references: [title])
   movieTitleTitle String
   start           DateTime
+  valid           DateTime
+  validForMembers DateTime
 
   @@unique(fields: [cinemaSlug, movieTitleTitle, start])
 }
 
 model User {
-  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   email     String   @unique
+  id        String   @id @default(uuid())
   isAdmin   Boolean  @default(false)
 }
