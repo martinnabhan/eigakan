@@ -14,10 +14,12 @@ const Showtimes = () => {
         rows={data?.map(({ cinema, movie, start }) => (
           <>
             <div className="flex w-full items-center gap-x-2">
-              <Image alt="" className="object-cover" height={138} src={`https://image.tmdb.org/t/p/w154${movie.poster}`} width={92} />
+              {movie && (
+                <Image alt="" className="object-cover" height={138} src={`https://image.tmdb.org/t/p/w154${movie.poster}`} width={92} />
+              )}
 
               <div className="flex flex-col">
-                <p>{movie.title}</p>
+                {movie && <p>{movie.title}</p>}
                 <p>{cinema.name}</p>
                 <p>{format(start, 'MM月dd日 HH:mm')}</p>
               </div>

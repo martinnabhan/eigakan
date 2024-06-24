@@ -118,6 +118,7 @@ const parseCinema = async (
         console.info(`作成：${cinemaName.cinema.slug}、${movie.id}、${start}`);
 
         await prisma.showtime.create({
+          // @ts-expect-error 未対応
           data: {
             areaSlug: cinemaName.cinema.areaSlug,
             cinemaSlug: cinemaName.cinema.slug,
