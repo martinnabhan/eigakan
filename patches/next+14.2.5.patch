@@ -1,3 +1,11 @@
+diff --git a/node_modules/next/.DS_Store b/node_modules/next/.DS_Store
+new file mode 100644
+index 0000000..3b4b9f7
+Binary files /dev/null and b/node_modules/next/.DS_Store differ
+diff --git a/node_modules/next/dist/.DS_Store b/node_modules/next/dist/.DS_Store
+new file mode 100644
+index 0000000..d0fb909
+Binary files /dev/null and b/node_modules/next/dist/.DS_Store differ
 diff --git a/node_modules/next/dist/shared/lib/router/router.js b/node_modules/next/dist/shared/lib/router/router.js
 index 0f9b8a1..bd7b947 100644
 --- a/node_modules/next/dist/shared/lib/router/router.js
